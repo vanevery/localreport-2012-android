@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">Local Report 2012</string>
+    <string name="main_menu_top">Welcome to Local Report 2012</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main_menu">Local Report 2012</string>
+    <string name="main_menu_button1">Capture and Send Video</string>
+    <string name="main_menu_button2">Audio</string>
+
+</resources>
