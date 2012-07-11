@@ -2,12 +2,13 @@ package com.mobvcasting.localreport2012;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.support.v4.app.NavUtils;
 
-public class MainMenu extends Activity {
+public class MainMenu extends Activity implements OnClickListener {
 
 	Button videoButton, audioButton;
 	
@@ -18,13 +19,20 @@ public class MainMenu extends Activity {
         
         videoButton = (Button) this.findViewById(R.id.button1);
         audioButton = (Button) this.findViewById(R.id.button2);
+        
+        videoButton.setOnClickListener(this);
+        audioButton.setOnClickListener(this);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main_menu, menu);
-        return true;
-    }
+
+	@Override
+	public void onClick(View v) {
+		if (v == audioButton) {
+    		//startActivity(new Intent(this, AudioCapture.class));
+		} else if (v == videoButton) {
+    		startActivity(new Intent(this, VideoCapture.class));			
+		}
+	}
 
     
 }
