@@ -70,7 +70,7 @@ public class VideoUploader extends Activity {
 		protected Void doInBackground(Void... params) {
 
 			HttpClient httpclient = new DefaultHttpClient();
-			HttpPost httppost = new HttpPost("http://blip.tv/file/post");
+			HttpPost httppost = new HttpPost("http://23.23.89.21:8080/post.php");
 
 			ProgressMultipartEntity multipartentity = new ProgressMultipartEntity(
 					this);
