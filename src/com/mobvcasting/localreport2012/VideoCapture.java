@@ -3,6 +3,7 @@ package com.mobvcasting.localreport2012;
 import java.io.File;
 import java.io.IOException;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
@@ -33,7 +34,10 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-				
+		startActivity(new Intent(this, VideoUploader.class));
+		
+		//Not working on emulator
+		/*
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -41,6 +45,7 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 
 		camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_LOW);
 
+		
 		setContentView(R.layout.activity_video_capture);
 
 		SurfaceView cameraView = (SurfaceView) findViewById(R.id.CameraView);
@@ -50,6 +55,7 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 
 		cameraView.setClickable(true);
 		cameraView.setOnClickListener(this);
+		*/
 	}
 
 	private void prepareRecorder() {
@@ -63,9 +69,9 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		
 		recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
 		recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
-
+		
+		
 		recorder.setProfile(camcorderProfile);
-
 		// This is all very sloppy
 		if (camcorderProfile.fileFormat == MediaRecorder.OutputFormat.THREE_GPP) {
         	try {
@@ -96,11 +102,11 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 			}
 
 		}
-		//recorder.setMaxDuration(50000); // 50 seconds
-		//recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
+		recorder.setMaxDuration(50000); // 50 seconds
+		recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
 		
 		try {
-			recorder.prepare();
+			recorder.prepare();			
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 			finish();

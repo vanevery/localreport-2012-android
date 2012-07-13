@@ -31,6 +31,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -54,11 +55,12 @@ public class VideoUploader extends Activity {
 
 		textview = (TextView) findViewById(R.id.textview);
 
-		//videoFile = new File(videoFilePath);
+		videoFile = new File(Environment.getExternalStorageDirectory() + "/VID_20120711_144557.mp4");
 		fileLength = videoFile.length();
 		VideoUploaderTask vut = new VideoUploaderTask();
 		vut.execute();
 
+		
 	}
 
 	class VideoUploaderTask extends AsyncTask<Void, String, Void> implements
