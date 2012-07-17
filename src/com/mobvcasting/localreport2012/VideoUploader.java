@@ -61,8 +61,7 @@ public class VideoUploader extends Activity {
 		VideoUploaderTask vut = new VideoUploaderTask();
 		vut.execute();
 
-		
-	}
+		}
 
 	class VideoUploaderTask extends AsyncTask<Void, String, Void> implements
 			ProgressListener, BlipXMLParserListener {
@@ -133,7 +132,10 @@ public class VideoUploader extends Activity {
 		}
 
 		protected void onPostExecute(Void result) {
-			
+			/*
+			VideoUploader.this.finish();
+			return;
+			*/
 		}
 
 		public void transferred(long num) {
