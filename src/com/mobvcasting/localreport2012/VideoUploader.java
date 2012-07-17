@@ -19,6 +19,7 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -88,9 +89,9 @@ public class VideoUploader extends Activity {
 
 				httppost.setEntity(multipartentity);
 				HttpResponse httpresponse = httpclient.execute(httppost);
-
 				HttpEntity responseentity = httpresponse.getEntity();
-				if (responseentity != null) {
+				String str = EntityUtils.toString(responseentity);
+				if (responseentity != null && (str.length() > 0)) {
 
 					InputStream inputstream = responseentity.getContent();
 
@@ -104,6 +105,7 @@ public class VideoUploader extends Activity {
 						BlipResponseXMLHandler xmlHandler = new BlipResponseXMLHandler(
 								this);
 						anXMLReader.setContentHandler(xmlHandler);
+						
 						anXMLReader.parse(new InputSource(inputstream));
 
 					} catch (ParserConfigurationException e) {
