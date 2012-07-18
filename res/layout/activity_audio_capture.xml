@@ -1,25 +1,33 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:padding="@dimen/padding_medium"
         android:text="@string/title_activity_audio_capture"
         tools:context=".AudioCapture" />
-    
-    <ImageButton
-      android:id="@+id/dialButton"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content" />
 
-    <ImageButton
-        android:id="@+id/hangupButton"
+    <TextView
+        android:id="@+id/StatusTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    
-</RelativeLayout>
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_medium"
+        tools:context=".AudioCapture" />
+
+    <Button
+        android:id="@+id/StopRecording"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/audio_capture_stop_button" />
+
+    <Button
+        android:id="@+id/UploadButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/audio_capture_upload_button" />
+
+</LinearLayout>

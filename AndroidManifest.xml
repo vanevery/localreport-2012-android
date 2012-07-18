@@ -33,6 +33,12 @@
             android:name=".AudioCall" >
         </activity>
         <activity
+        	android:name=".AudioCapture">
+        </activity>
+        <activity
+            android:name=".AudioUploader">
+        </activity>
+        <activity
             android:name=".VideoCapture" >
         </activity>
         <activity 

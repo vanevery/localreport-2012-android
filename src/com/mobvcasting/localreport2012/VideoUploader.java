@@ -58,12 +58,12 @@ public class VideoUploader extends Activity {
 
 		videoFile = new File(Environment.getExternalStorageDirectory() + "/VID_20120711_144557.mp4");
 		fileLength = videoFile.length();
-		VideoUploaderTask vut = new VideoUploaderTask();
+		UploaderTask vut = new UploaderTask();
 		vut.execute();
 
 		}
 
-	class VideoUploaderTask extends AsyncTask<Void, String, Void> implements
+	class UploaderTask extends AsyncTask<Void, String, Void> implements
 			ProgressListener, BlipXMLParserListener {
 
 		String videoUrl;
