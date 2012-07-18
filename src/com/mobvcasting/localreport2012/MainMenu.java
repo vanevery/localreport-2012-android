@@ -28,7 +28,7 @@ public class MainMenu extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		if (v == audioButton) {
-    		//startActivity(new Intent(this, AudioCapture.class));
+    		startActivity(new Intent(this, AudioCall.class));
 		} else if (v == videoButton) {
     		startActivity(new Intent(this, VideoCapture.class));			
 		}
