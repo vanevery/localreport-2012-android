@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 public class AudioCall extends Activity implements View.OnClickListener
 {
     private TwilioPhone phone;
+    Button dialButton, hangupButton, backupButton;
 
     @Override
     public void onCreate(Bundle bundle)
@@ -20,24 +21,24 @@ public class AudioCall extends Activity implements View.OnClickListener
 
         phone = new TwilioPhone(getApplicationContext());
 
-        ImageButton dialButton = (ImageButton)findViewById(R.id.dialButton);
+        dialButton = (Button) findViewById(R.id.dialButton);
         dialButton.setOnClickListener(this);
 
-        ImageButton hangupButton = (ImageButton)findViewById(R.id.hangupButton);
+        hangupButton = (Button) findViewById(R.id.hangupButton);
         hangupButton.setOnClickListener(this);
         
-        Button backupButton = (Button)findViewById(R.id.backupButton);
+        backupButton = (Button)findViewById(R.id.backupButton);
         backupButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view)
     {
-        if (view.getId() == R.id.dialButton)
+        if (view == dialButton)
             phone.connect();
-        else if (view.getId() == R.id.hangupButton)
+        else if (view == hangupButton)
             phone.disconnect();
-        else if (view.getId() == R.id.backupButton)
+        else if (view == backupButton)
         	startActivity(new Intent(this, AudioCapture.class));
     }
 }
