@@ -12,14 +12,16 @@
         android:text="@string/title_activity_audio_capture"
         tools:context=".AudioCapture" />
     
-    <ImageButton
+    <Button
       android:id="@+id/dialButton"
       android:layout_width="wrap_content"
-      android:layout_height="wrap_content" />
+      android:layout_height="wrap_content" 
+      android:text="Dial" />
 
-    <ImageButton
+    <Button
         android:id="@+id/hangupButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" 
+        android:text="Hangup "/>
     
 </RelativeLayout>
