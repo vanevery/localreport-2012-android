@@ -20,6 +20,7 @@ public class TwilioPhone implements Twilio.InitListener
 
     public TwilioPhone(Context context)
     {
+    	Log.v(LOGTAG,"Calling Initialize on Twilio");
         Twilio.initialize(context, this /* Twilio.InitListener */);
     }
 
@@ -27,11 +28,12 @@ public class TwilioPhone implements Twilio.InitListener
     @Override
     public void onInitialized()
     {
-        Log.d(LOGTAG, "Twilio SDK is ready");
+        Log.v(LOGTAG, "Twilio SDK is Initialized");
 
         try {
             String capabilityToken = HttpHelper.httpGet("http://23.23.89.21:8080/twilio_auth.php");
             device = Twilio.createDevice(capabilityToken, null /* DeviceListener */);
+            Log.v(LOGTAG,"Created Twilio Device");
         } catch (Exception e) {
             Log.e(LOGTAG, "Failed to obtain capability token: " + e.getLocalizedMessage());
         }
@@ -41,14 +43,14 @@ public class TwilioPhone implements Twilio.InitListener
     @Override
     public void onError(Exception e)
     {
-        Log.e(LOGTAG, "Twilio SDK couldn't start: " + e.getLocalizedMessage());
+        Log.v(LOGTAG, "Twilio SDK couldn't start: " + e.getLocalizedMessage());
     }
 
     public void connect()
     {
         connection = device.connect(null /* parameters */, null /* ConnectionListener */);
         if (connection == null)
-            Log.w(LOGTAG, "Failed to create new connection");
+            Log.v(LOGTAG, "Failed to create new connection");
     }
  
     public void disconnect()

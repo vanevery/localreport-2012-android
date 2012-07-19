@@ -3,6 +3,7 @@ package com.mobvcasting.localreport2012;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,6 +11,8 @@ import android.widget.ImageButton;
 
 public class AudioCall extends Activity implements View.OnClickListener
 {
+    private static final String LOGTAG = "AudioCall";
+
     private TwilioPhone phone;
     Button dialButton, hangupButton, backupButton;
 
@@ -20,7 +23,8 @@ public class AudioCall extends Activity implements View.OnClickListener
         setContentView(R.layout.activity_audio_call);
 
         phone = new TwilioPhone(getApplicationContext());
-
+        Log.v(LOGTAG,"TwilioPhone Created");
+        
         dialButton = (Button) findViewById(R.id.dialButton);
         dialButton.setOnClickListener(this);
 

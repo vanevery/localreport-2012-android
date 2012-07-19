@@ -45,6 +45,11 @@
         <activity 
             android:name=".VideoUploader">    
         </activity>
-        </application>
+
+        <service
+          android:name="com.twilio.client.TwilioClientService"
+          android:exported="false" />
+        
+	</application>
 
 </manifest>
