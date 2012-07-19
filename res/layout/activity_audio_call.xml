@@ -8,18 +8,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="@dimen/padding_medium"
-        android:text="@string/title_activity_audio_capture"
+        android:text="@string/audio_call_title"
         tools:context=".AudioCapture" />
     
-    <ImageButton
+    <Button
       android:id="@+id/dialButton"
       android:layout_width="wrap_content"
-      android:layout_height="wrap_content" />
+      android:layout_height="wrap_content" 
+      android:text="@string/audio_call_dial" />
 
-    <ImageButton
+    <Button
         android:id="@+id/hangupButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" 
+        android:text="@string/audio_call_hangup" />
 
     <Button
         android:id="@+id/backupButton"

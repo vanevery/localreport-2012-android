@@ -31,11 +31,11 @@ public class AudioCapture extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_capture);
 
-        statusTextView = (TextView) this.findViewById(R.id.StatusTextView);
+        statusTextView = (TextView) this.findViewById(R.id.statusText);
         statusTextView.setText("Ready...");
 
-        stopRecording = (Button) this.findViewById(R.id.StopRecording);
-        uploadButton = (Button) this.findViewById(R.id.UploadButton);
+        stopRecording = (Button) this.findViewById(R.id.captureButton);
+        uploadButton = (Button) this.findViewById(R.id.uploadButton);
         stopRecording.setOnClickListener(this);
         uploadButton.setOnClickListener(this);
         stopRecording.setEnabled(false);
