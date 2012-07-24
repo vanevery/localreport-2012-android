@@ -1,14 +1,12 @@
 package com.mobvcasting.localreport2012;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,31 +18,22 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class VideoUploader extends Activity {
-
+	
+	public static String LOGTAG = "VIDEOUPLOADER";
+	
 	File videoFile;
-	String title = "A Video";
-	String username = "BLIPTV_USERNAME";
-	String password = "BLIPTV_PASSWORD";
-
+	String userid;
 	String postingResult = "";
-
 	long fileLength = 0;
 
 	TextView textview;
@@ -56,35 +45,43 @@ public class VideoUploader extends Activity {
 
 		textview = (TextView) findViewById(R.id.textview);
 
-		videoFile = new File(Environment.getExternalStorageDirectory() + "/VID_20120711_144557.mp4");
+		userid = getString(R.string.default_userid);
+		
+        // Get the extras that have been passed in
+        Bundle extras = getIntent().getExtras();
+        
+        // Let's find out which button was pushed to get us here
+        if (extras.containsKey("filePath")) {
+        	String filePath = extras.getString("filePath");
+        	videoFile = new File(filePath);
+        	
+        	Toast.makeText(this, videoFile.toString(), Toast.LENGTH_SHORT).show();
+        	
+        } else {
+        	videoFile = new File(Environment.getExternalStorageDirectory() + "/VID_20120711_144557.mp4");
+        }
+		
 		fileLength = videoFile.length();
+
 		UploaderTask vut = new UploaderTask();
 		vut.execute();
+	}
 
-		}
-
-	class UploaderTask extends AsyncTask<Void, String, Void> implements
-			ProgressListener, BlipXMLParserListener {
-
-		String videoUrl;
-
+	class UploaderTask extends AsyncTask<Void, String, String> implements ProgressListener 
+	{
 		@Override
-		protected Void doInBackground(Void... params) {
-
+		protected String doInBackground(Void... params) {
+			StringBuilder responseSB = new StringBuilder();
+			
 			HttpClient httpclient = new DefaultHttpClient();
-			HttpPost httppost = new HttpPost("http://23.23.89.21:8080/post.php");
+			HttpPost httppost = new HttpPost(getString(R.string.upload_url));
 
-			ProgressMultipartEntity multipartentity = new ProgressMultipartEntity(
-					this);
+			ProgressMultipartEntity multipartentity = new ProgressMultipartEntity(this);
 
 			try {
 				multipartentity.addPart("file", new FileBody(videoFile));
-
-				multipartentity.addPart("userlogin", new StringBody(username));
-				multipartentity.addPart("password", new StringBody(password));
-				multipartentity.addPart("title", new StringBody(title));
-				multipartentity.addPart("post", new StringBody("1"));
-				multipartentity.addPart("skin", new StringBody("api"));
+				multipartentity.addPart("userid", new StringBody(userid));
+				multipartentity.addPart("form_submitted", new StringBody("true"));
 
 				httppost.setEntity(multipartentity);
 				HttpResponse httpresponse = httpclient.execute(httppost);
@@ -92,30 +89,16 @@ public class VideoUploader extends Activity {
 				String str = EntityUtils.toString(responseentity);
 				if (responseentity != null && (str.length() > 0)) {
 
-					InputStream inputstream = responseentity.getContent();
+					InputStream inputStream = responseentity.getContent();
 
-					SAXParserFactory aSAXParserFactory = SAXParserFactory
-							.newInstance();
-					try {
-
-						SAXParser aSAXParser = aSAXParserFactory.newSAXParser();
-						XMLReader anXMLReader = aSAXParser.getXMLReader();
-
-						BlipResponseXMLHandler xmlHandler = new BlipResponseXMLHandler(
-								this);
-						anXMLReader.setContentHandler(xmlHandler);
-						
-						anXMLReader.parse(new InputSource(inputstream));
-
-					} catch (ParserConfigurationException e) {
-						e.printStackTrace();
-					} catch (SAXException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-
-					inputstream.close();
+					BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+					
+					String line;
+					while ((line = r.readLine()) != null) {
+						responseSB.append(line);
+					}					
+					
+					inputStream.close();
 
 				}
 			} catch (ClientProtocolException e) {
@@ -124,18 +107,15 @@ public class VideoUploader extends Activity {
 				e.printStackTrace();
 			}
 
-			return null;
+			return responseSB.toString();
 		}
 
 		protected void onProgressUpdate(String... textToDisplay) {
 			textview.setText(textToDisplay[0]);
 		}
 
-		protected void onPostExecute(Void result) {
-			/*
-			VideoUploader.this.finish();
-			return;
-			*/
+		protected void onPostExecute(String result) {
+			Toast.makeText(VideoUploader.this, result, Toast.LENGTH_LONG).show();
 		}
 
 		public void transferred(long num) {
@@ -147,10 +127,6 @@ public class VideoUploader extends Activity {
 
 		public void parseResult(String result) {
 			publishProgress(result);
-		}
-
-		public void setVideoUrl(String url) {
-			videoUrl = url;
 		}
 	}
 
@@ -195,94 +171,6 @@ public class VideoUploader extends Activity {
 			out.write(b);
 			this.transferred++;
 			this.listener.transferred(this.transferred);
-		}
-	}
-
-	interface BlipXMLParserListener {
-		void parseResult(String result);
-
-		void setVideoUrl(String url);
-	}
-
-	class BlipResponseXMLHandler extends DefaultHandler {
-
-		int NONE = 0;
-		int ONSTATUS = 1;
-		int ONFILE = 2;
-		int ONERRORMESSAGE = 3;
-
-		int state = NONE;
-
-		int STATUS_UNKNOWN = 0;
-		int STATUS_OK = 1;
-		int STATUS_ERROR = 2;
-
-		int status = STATUS_UNKNOWN;
-
-		String message = "";
-
-		BlipXMLParserListener listener;
-
-		public BlipResponseXMLHandler(BlipXMLParserListener bxpl) {
-			super();
-			listener = bxpl;
-		}
-
-		@Override
-		public void startDocument() throws SAXException {
-		}
-
-		@Override
-		public void endDocument() throws SAXException {
-		}
-
-		@Override
-		public void startElement(String uri, String localName, String qName,
-				Attributes attributes) throws SAXException {
-			if (localName.equalsIgnoreCase("status")) {
-				state = ONSTATUS;
-			} else if (localName.equalsIgnoreCase("file")) {
-				state = ONFILE;
-
-				listener.parseResult("onFile");
-				message = attributes.getValue("src");
-				listener.parseResult("filemessage:" + message);
-
-				listener.setVideoUrl(message);
-			} else if (localName.equalsIgnoreCase("message")) {
-				state = ONERRORMESSAGE;
-				listener.parseResult("onErrorMessage");
-			}
-		}
-
-		@Override
-		public void endElement(String uri, String localName, String qName)
-				throws SAXException {
-			if (localName.equalsIgnoreCase("status")) {
-				state = NONE;
-			} else if (localName.equalsIgnoreCase("file")) {
-				state = NONE;
-			} else if (localName.equalsIgnoreCase("message")) {
-				state = NONE;
-			}
-		}
-
-		@Override
-		public void characters(char[] ch, int start, int length)
-				throws SAXException {
-			String stringChars = new String(ch, start, length);
-			if (state == ONSTATUS) {
-				if (stringChars.equalsIgnoreCase("OK")) {
-					status = STATUS_OK;
-				} else if (stringChars.equalsIgnoreCase("ERROR")) {
-					status = STATUS_ERROR;
-				} else {
-					status = STATUS_UNKNOWN;
-				}
-			} else if (state == ONERRORMESSAGE) {
-				message += stringChars.trim();
-				listener.parseResult(message);
-			}
 		}
 	}
 }

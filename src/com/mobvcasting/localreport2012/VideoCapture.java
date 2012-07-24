@@ -2,6 +2,7 @@ package com.mobvcasting.localreport2012;
 
 import java.io.File;
 import java.io.IOException;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -31,13 +32,15 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	boolean usecamera = true;
 	boolean previewRunning = false;
 	
+	String filePath = "";
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		startActivity(new Intent(this, VideoUploader.class));
+		//startActivity(new Intent(this, VideoUploader.class));
 		
 		//Not working on emulator
-		/*
+		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -55,7 +58,7 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 
 		cameraView.setClickable(true);
 		cameraView.setOnClickListener(this);
-		*/
+		
 	}
 
 	private void prepareRecorder() {
@@ -76,7 +79,8 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		if (camcorderProfile.fileFormat == MediaRecorder.OutputFormat.THREE_GPP) {
         	try {
 				File newFile = File.createTempFile("videocapture", ".3gp", Environment.getExternalStorageDirectory());
-				recorder.setOutputFile(newFile.getAbsolutePath());
+				filePath = newFile.getAbsolutePath();
+				
 			} catch (IOException e) {
 				Log.v(LOGTAG,"Couldn't create file");
 				e.printStackTrace();
@@ -85,7 +89,8 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		} else if (camcorderProfile.fileFormat == MediaRecorder.OutputFormat.MPEG_4) {
         	try {
 				File newFile = File.createTempFile("videocapture", ".mp4", Environment.getExternalStorageDirectory());
-				recorder.setOutputFile(newFile.getAbsolutePath());
+				filePath = newFile.getAbsolutePath();
+
 			} catch (IOException e) {
 				Log.v(LOGTAG,"Couldn't create file");
 				e.printStackTrace();
@@ -94,15 +99,20 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		} else {
         	try {
 				File newFile = File.createTempFile("videocapture", ".mp4", Environment.getExternalStorageDirectory());
-				recorder.setOutputFile(newFile.getAbsolutePath());
-			} catch (IOException e) {
+				filePath = newFile.getAbsolutePath();
+
+        	} catch (IOException e) {
 				Log.v(LOGTAG,"Couldn't create file");
 				e.printStackTrace();
 				finish();
 			}
 
 		}
-		recorder.setMaxDuration(50000); // 50 seconds
+		
+		recorder.setOutputFile(filePath);
+		
+
+		recorder.setMaxDuration(20000); // 20 seconds
 		recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
 		
 		try {
@@ -119,18 +129,27 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	public void onClick(View v) {
 		if (recording) {
 			recorder.stop();
+			/*
 			if (usecamera) {
 				try {
 					camera.reconnect();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}			
-			// recorder.release();
+			}
+			*/			
+			recorder.release();
 			recording = false;
 			Log.v(LOGTAG, "Recording Stopped");
-			// Let's prepareRecorder so we can record again
-			prepareRecorder();
+			// Let's prepareRecorder so we can record again - NOPE
+			//prepareRecorder();
+			
+			// Upload it
+			Intent videoUPIntent = new Intent(this,VideoUploader.class);
+			videoUPIntent.putExtra("filePath", filePath);
+			startActivity(videoUPIntent);
+			finish();
+			
 		} else {
 			recording = true;
 			recorder.start();
@@ -200,6 +219,5 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 			camera.lock();
 			camera.release();
 		}
-		finish();
 	}
 }
