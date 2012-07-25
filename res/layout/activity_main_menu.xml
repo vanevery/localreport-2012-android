@@ -4,30 +4,48 @@
     android:layout_height="fill_parent" >
 
     <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:padding="@dimen/padding_medium"
-        android:text="@string/main_menu_top"
-        tools:context=".MainMenu" />
-
-    <Button
-        android:id="@+id/button1"
+        android:id="@+id/timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="31dp"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/padding_medium"
+        android:text="@string/main_menu_top"
+        android:textSize="20sp"
+        tools:context=".MainMenu" />
+
+    <TextView
+        android:id="@+id/messageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="82dp"
+        android:background="@drawable/back"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/padding_medium"
+        android:text="messages"
+        android:textSize="20sp"
+        tools:context=".MainMenu" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/timer"
+        android:layout_marginTop="44dp"
         android:text="@string/main_menu_button1" />
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/textView1"
-        android:layout_alignLeft="@+id/button1"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/button1"
+        android:layout_marginTop="22dp"
         android:text="@string/main_menu_button2" />
 
 </RelativeLayout>
