@@ -70,8 +70,8 @@ public class VideoUploader extends Activity {
 	class UploaderTask extends AsyncTask<Void, String, String> implements ProgressListener 
 	{
 		@Override
-		protected String doInBackground(Void... params) {
-			StringBuilder responseSB = new StringBuilder();
+		protected String doInBackground(Void... params) {			
+			String returnString = "";
 			
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = new HttpPost(getString(R.string.upload_url));
@@ -86,28 +86,16 @@ public class VideoUploader extends Activity {
 				httppost.setEntity(multipartentity);
 				HttpResponse httpresponse = httpclient.execute(httppost);
 				HttpEntity responseentity = httpresponse.getEntity();
-				String str = EntityUtils.toString(responseentity);
-				if (responseentity != null && (str.length() > 0)) {
-
-					InputStream inputStream = responseentity.getContent();
-
-					BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
-					
-					String line;
-					while ((line = r.readLine()) != null) {
-						responseSB.append(line);
-					}					
-					
-					inputStream.close();
-
-				}
+				
+				returnString = EntityUtils.toString(responseentity);
+				
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-			return responseSB.toString();
+			return returnString;
 		}
 
 		protected void onProgressUpdate(String... textToDisplay) {
