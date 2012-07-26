@@ -22,7 +22,7 @@ import android.widget.TextView;
 public class AudioCapture extends Activity implements OnClickListener {
 
         private TextView statusTextView;
-        private ImageButton uploadButton, stopRecording;
+        private Button uploadButton, stopRecording;
         private MediaRecorder recorder;
 
         private File audioFile;
@@ -35,8 +35,8 @@ public class AudioCapture extends Activity implements OnClickListener {
         statusTextView = (TextView) this.findViewById(R.id.statusText);
         statusTextView.setText("Ready...");
 
-        stopRecording = (ImageButton) this.findViewById(R.id.captureButton);
-        uploadButton = (ImageButton) this.findViewById(R.id.uploadButton);
+        stopRecording = (Button) this.findViewById(R.id.captureButton);
+        uploadButton = (Button) this.findViewById(R.id.uploadButton);
         stopRecording.setOnClickListener(this);
         uploadButton.setOnClickListener(this);
         stopRecording.setEnabled(false);

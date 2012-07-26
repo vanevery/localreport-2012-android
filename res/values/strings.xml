@@ -10,7 +10,7 @@
     
     <string name="backup_button_title">Record and Upload Audio</string>
     
-    <string name="title_activity_audio_capture">Make Call</string>
+    <string name="title_activity_audio_capture">Record Audio</string>
     <string name="audio_capture_stop_button">Stop Recording</string>
     <string name="audio_capture_upload_button">Upload Audio</string>
     
