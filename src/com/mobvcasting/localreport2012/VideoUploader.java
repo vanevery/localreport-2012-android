@@ -24,6 +24,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,9 @@ public class VideoUploader extends Activity {
 	long fileLength = 0;
 
 	TextView textview;
+	
+	ProgressBar mProgress;
+    int mProgressStatus = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,8 @@ public class VideoUploader extends Activity {
 		textview = (TextView) findViewById(R.id.textview);
 
 		userid = getString(R.string.default_userid);
+		
+		mProgress = (ProgressBar) findViewById(R.id.uploadProgress);
 		
         // Get the extras that have been passed in
         Bundle extras = getIntent().getExtras();
@@ -109,8 +115,9 @@ public class VideoUploader extends Activity {
 		public void transferred(long num) {
 			double percent = (double) num / (double) fileLength;
 			int percentInt = (int) (percent * 100);
-
+			mProgressStatus = percentInt;
 			publishProgress("" + percentInt + "% Transferred");
+			mProgress.setProgress(mProgressStatus);
 		}
 
 		public void parseResult(String result) {
