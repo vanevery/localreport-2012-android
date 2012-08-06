@@ -37,9 +37,6 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//startActivity(new Intent(this, VideoUploader.class));
-		
-		//Not working on emulator
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -48,7 +45,6 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 
 		camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_LOW);
 
-		
 		setContentView(R.layout.activity_video_capture);
 
 		SurfaceView cameraView = (SurfaceView) findViewById(R.id.CameraView);
@@ -58,7 +54,6 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 
 		cameraView.setClickable(true);
 		cameraView.setOnClickListener(this);
-		
 	}
 
 	private void prepareRecorder() {
@@ -145,9 +140,10 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 			//prepareRecorder();
 			
 			// Upload it
-			Intent videoUPIntent = new Intent(this,VideoUploader.class);
-			videoUPIntent.putExtra("filePath", filePath);
-			startActivity(videoUPIntent);
+			Intent fileUpIntent = new Intent(this,FileUploader.class);
+			fileUpIntent.putExtra("filePath", filePath);
+			fileUpIntent.putExtra("audio_or_video", "video");
+			startActivity(fileUpIntent);
 			finish();
 			
 		} else {
