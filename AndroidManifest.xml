@@ -41,7 +41,7 @@
             android:name=".VideoCapture" >
         </activity>
         <activity 
-            android:name=".VideoUploader">    
+            android:name=".FileUploader">    
         </activity>
 
         <service
