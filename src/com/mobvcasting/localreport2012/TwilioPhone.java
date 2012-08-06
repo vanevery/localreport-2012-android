@@ -17,11 +17,13 @@ public class TwilioPhone implements Twilio.InitListener
 
     private Device device;
     private Connection connection;
+    private Context appContext;
 
     public TwilioPhone(Context context)
     {
     	Log.v(LOGTAG,"Calling Initialize on Twilio");
         Twilio.initialize(context, this /* Twilio.InitListener */);
+        appContext = context;
     }
 
     /* Twilio.InitListener method */
@@ -31,7 +33,9 @@ public class TwilioPhone implements Twilio.InitListener
         Log.v(LOGTAG, "Twilio SDK is Initialized");
 
         try {
-            String capabilityToken = HttpHelper.httpGet("http://23.23.89.21:8080/twilio_auth.php");
+            String capabilityToken = HttpHelper.httpGet(appContext.getString(R.string.twilio_auth_url));
+            Log.v(LOGTAG, appContext.getString(R.string.twilio_auth_url) + " Auth Token: " + capabilityToken);
+            
             device = Twilio.createDevice(capabilityToken, null /* DeviceListener */);
             Log.v(LOGTAG,"Created Twilio Device");
         } catch (Exception e) {
