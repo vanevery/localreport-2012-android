@@ -21,11 +21,12 @@ import android.widget.TextView;
 
 public class AudioCapture extends Activity implements OnClickListener {
 
-        private TextView statusTextView;
-        private Button uploadButton, stopRecording;
-        private MediaRecorder recorder;
+    private TextView statusTextView;
+    private Button uploadButton, stopRecording;
+    private MediaRecorder recorder;
 
-        private File audioFile;
+    private File audioFile;
+	String filePath;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,8 +53,6 @@ public class AudioCapture extends Activity implements OnClickListener {
         }, 1000);
     }
 
-
-
     private void startRecording() {
         //construct a MediaRecorder
         recorder = new MediaRecorder();
@@ -67,6 +66,7 @@ public class AudioCapture extends Activity implements OnClickListener {
 
         try {
                 audioFile = File.createTempFile("recording", ".gp", path);
+                filePath = audioFile.getAbsolutePath();
         } catch (IOException e){
                 throw new RuntimeException("Failed to create recording audio file", e);
         }
@@ -89,26 +89,28 @@ public class AudioCapture extends Activity implements OnClickListener {
         uploadButton.setEnabled(false);
     }
 
+    @Override
+    public void onClick(View v) {
+            if (v == stopRecording) {
+                    /*
+                    //stop Recorder
+                    recorder.stop();
+                    recorder.release();
+                    */
 
-        @Override
-        public void onClick(View v) {
-                if(v == stopRecording){
-                        /*
-                        //stop Recorder
-                        recorder.stop();
-                        recorder.release();
-                        */
+                    //update UI
+                    statusTextView.setText("Ready to Upload");
+                    uploadButton.setEnabled(true);
+                    stopRecording.setEnabled(false);
 
-                        //update UI
-                        statusTextView.setText("Ready to Upload");
-                        uploadButton.setEnabled(true);
-                        stopRecording.setEnabled(false);
-
-                }else if(v == uploadButton){
-                         startActivity(new Intent(this, AudioUploader.class));
-                }
-        }
-
-
+            } else if (v == uploadButton) {
+    			// Upload it
+    			Intent fileUpIntent = new Intent(this,FileUploader.class);
+    			fileUpIntent.putExtra("filePath", filePath);
+    			fileUpIntent.putExtra("audio_or_video", "audio");
+    			startActivity(fileUpIntent);
+    			finish();
+            }
+    }
 }
 
