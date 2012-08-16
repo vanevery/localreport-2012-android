@@ -1,9 +1,12 @@
 package com.mobvcasting.localreport2012;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.view.Menu;
@@ -12,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainMenu extends Activity implements OnClickListener {
 
@@ -34,7 +38,14 @@ public class MainMenu extends Activity implements OnClickListener {
                   startCountdown(TIME);
           }
         }, 2000);
-    	*/
+        
+        if(noNetworkConnection()){
+        	Context context = getApplicationContext();
+        	CharSequence text = "No network connection!";
+        	int duration = Toast.LENGTH_LONG;
+
+        	Toast.makeText(context, text, duration).show();
+        }
     }
 
     @Override
@@ -43,6 +54,14 @@ public class MainMenu extends Activity implements OnClickListener {
       initUI();
     }
 	
+    private boolean noNetworkConnection(){
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+			return false;
+		}
+		return true;
+    }
 
 	public void initUI() {
         setContentView(R.layout.activity_main_menu);
