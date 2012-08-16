@@ -5,10 +5,12 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MainMenu extends Activity implements OnClickListener {
@@ -18,16 +20,11 @@ public class MainMenu extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_menu);
-        
-        videoButton = (Button) this.findViewById(R.id.button1);
-        audioButton = (Button) this.findViewById(R.id.button2);
-        
-        videoButton.setOnClickListener(this);
-        audioButton.setOnClickListener(this);
+        initUI();
         
         setMessage(MESSAGE);
         
+        /*
         //2 second delay before starting countdown 
         //for design and testing purposes
         final Handler handler = new Handler();
@@ -37,9 +34,27 @@ public class MainMenu extends Activity implements OnClickListener {
                   startCountdown(TIME);
           }
         }, 2000);
-    
+    	*/
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+      super.onConfigurationChanged(newConfig);
+      initUI();
+    }
+	
+
+	public void initUI() {
+        setContentView(R.layout.activity_main_menu);
+        
+        videoButton = (Button) this.findViewById(R.id.button1);
+        audioButton = (Button) this.findViewById(R.id.button2);
+        
+        videoButton.setOnClickListener(this);
+        audioButton.setOnClickListener(this);
+	}
+    
+    
 
 	@Override
 	public void onClick(View v) {
@@ -73,6 +88,7 @@ public class MainMenu extends Activity implements OnClickListener {
 		TextView messageView = (TextView) this.findViewById(R.id.messageView);
 		messageView.setText(message);
 	}
+	
 	//private constants to make code easier to change for final app timer
 	private static int TIME = 30000;
     private static int ONE_SECOND = 1000;

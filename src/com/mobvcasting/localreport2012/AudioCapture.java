@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,10 +28,21 @@ public class AudioCapture extends Activity implements OnClickListener {
 
     private File audioFile;
 	String filePath;
-
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        initUI();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+      super.onConfigurationChanged(newConfig);
+      initUI();
+    }
+
+    public void initUI() {
         setContentView(R.layout.activity_audio_capture);
 
         statusTextView = (TextView) this.findViewById(R.id.statusText);
@@ -42,17 +54,9 @@ public class AudioCapture extends Activity implements OnClickListener {
         uploadButton.setOnClickListener(this);
         stopRecording.setEnabled(false);
         uploadButton.setEnabled(false);
-
-        //Slight pause to give user time to prepare
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-          @Override
-          public void run() {
-                  startRecording();
-          }
-        }, 1000);
-    }
-
+		
+	}
+    
     private void startRecording() {
         //construct a MediaRecorder
         recorder = new MediaRecorder();

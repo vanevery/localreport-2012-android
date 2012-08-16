@@ -20,10 +20,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,11 +50,8 @@ public class FileUploader extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_video_uploader);
 
-		textview = (TextView) findViewById(R.id.textview);
-		
-		mProgress = (ProgressBar) findViewById(R.id.uploadProgress);
+		initUI();
 		
         // Get the extras that have been passed in
         Bundle extras = getIntent().getExtras();
@@ -83,7 +83,20 @@ public class FileUploader extends Activity {
         	Toast.makeText(this, "Video Not Found", Toast.LENGTH_SHORT).show();
         }
 	}
+	
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+      super.onConfigurationChanged(newConfig);
+      initUI();
+    }
+	
 
+	public void initUI() {
+		setContentView(R.layout.activity_video_uploader);
+		textview = (TextView) findViewById(R.id.textview);
+		mProgress = (ProgressBar) findViewById(R.id.uploadProgress);
+	}
+	
 	class UploaderTask extends AsyncTask<Void, String, String> implements ProgressListener 
 	{
 		@Override
@@ -123,6 +136,7 @@ public class FileUploader extends Activity {
 		protected void onPostExecute(String result) {
 			Toast.makeText(FileUploader.this, result, Toast.LENGTH_LONG).show();
 			Log.v(LOGTAG,result);
+			finish();
 		}
 
 		public void transferred(long num) {

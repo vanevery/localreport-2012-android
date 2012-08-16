@@ -22,26 +22,29 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainMenu"
-            android:label="@string/title_activity_main_menu" >
+            android:label="@string/title_activity_main_menu" 
+            android:configChanges="keyboardHidden|orientation"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".AudioCall" >
+            android:name=".AudioCall" 
+            android:configChanges="keyboardHidden|orientation">
         </activity>
         <activity
-        	android:name=".AudioCapture">
+        	android:name=".AudioCapture"
+        	android:configChanges="keyboardHidden|orientation">
         </activity>
         <activity
-            android:name=".AudioUploader">
-        </activity>
-        <activity
-            android:name=".VideoCapture" >
+            android:name=".VideoCapture" 
+            android:configChanges="keyboardHidden|orientation">
         </activity>
         <activity 
-            android:name=".FileUploader">    
+            android:name=".FileUploader"
+            android:configChanges="keyboardHidden|orientation">    
         </activity>
 
         <service

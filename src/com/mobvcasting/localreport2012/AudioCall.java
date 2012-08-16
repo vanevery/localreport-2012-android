@@ -2,6 +2,7 @@ package com.mobvcasting.localreport2012;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,12 +21,35 @@ public class AudioCall extends Activity implements View.OnClickListener
     public void onCreate(Bundle bundle)
     {
         super.onCreate(bundle);
-        setContentView(R.layout.activity_audio_call);
+    	initUI();
+    }
+    
+    @Override
+    public void onResume() {
+    	super.onResume();
+    	phone = new TwilioPhone(getApplicationContext());
+    	Log.v(LOGTAG,"TwilioPhone Created");
+    
+    }
+    
+    @Override
+    public void onPause() {
+    	phone.disconnect();
+    	super.onPause();
+    }
+    
 
-        phone = new TwilioPhone(getApplicationContext());
-        Log.v(LOGTAG,"TwilioPhone Created");
-        
-        dialButton = (Button) findViewById(R.id.dialButton);
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+      super.onConfigurationChanged(newConfig);
+      initUI();
+    }
+    
+    public void initUI() {
+        setContentView(R.layout.activity_audio_call);
+    	
+    	dialButton = (Button) findViewById(R.id.dialButton);
         dialButton.setOnClickListener(this);
 
         hangupButton = (Button) findViewById(R.id.hangupButton);
@@ -33,16 +57,21 @@ public class AudioCall extends Activity implements View.OnClickListener
         
         backupButton = (Button)findViewById(R.id.backupButton);
         backupButton.setOnClickListener(this);
+        backupButton.setVisibility(View.GONE);
     }
 
     @Override
     public void onClick(View view)
     {
-        if (view == dialButton)
+        if (view == dialButton) {
             phone.connect();
-        else if (view == hangupButton)
+        } else if (view == hangupButton) {
             phone.disconnect();
-        else if (view == backupButton)
+        	finish();
+        } else if (view == backupButton) {
         	startActivity(new Intent(this, AudioCapture.class));
+        	finish();
+        }
     }
+    
 }
