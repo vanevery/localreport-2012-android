@@ -58,7 +58,8 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-		camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_LOW);
+		//camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_LOW);
+		camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
 	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    if (cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()) {
 	    	camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
@@ -111,12 +112,19 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 			recorder.setCamera(camera);
 		}
 		
-		recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+		//recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
 		recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
 		recorder.setMaxDuration((int)(RECORD_TIME + ONE_SECOND));
 		//recorder.setMaxFileSize(5000000); // Approximately 5 megabytesx
 
-		recorder.setProfile(camcorderProfile);
+		//recorder.setProfile(camcorderProfile);
+		recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+		//recorder.setVideoSize(640, 480);
+		recorder.setVideoSize(camcorderProfile.videoFrameWidth, camcorderProfile.videoFrameHeight);
+		recorder.setVideoFrameRate(30);
+		recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+		recorder.setVideoEncodingBitRate(500000);
+		
 		// This is all very sloppy
 		if (camcorderProfile.fileFormat == MediaRecorder.OutputFormat.THREE_GPP) {
         	try {
@@ -234,8 +242,14 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 			try {
 				Camera.Parameters p = camera.getParameters();
 
+				//p.setPreviewSize(720, 480);
+				//p.setPreviewFrameRate(30);
 				 p.setPreviewSize(camcorderProfile.videoFrameWidth, camcorderProfile.videoFrameHeight);
+				 Log.v(LOGTAG,"Preview Size: " + camcorderProfile.videoFrameWidth + " " + camcorderProfile.videoFrameHeight);
 			     p.setPreviewFrameRate(camcorderProfile.videoFrameRate);
+				 
+			     p.getSupportedPreviewFrameRates();
+				 
 				
 				camera.setParameters(p);
 				
