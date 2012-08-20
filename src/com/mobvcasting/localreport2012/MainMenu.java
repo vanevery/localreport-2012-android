@@ -38,8 +38,9 @@ public class MainMenu extends Activity implements OnClickListener {
                   startCountdown(TIME);
           }
         }, 2000);
+        */
         
-        if(noNetworkConnection()){
+        if (noNetworkConnection()) {
         	Context context = getApplicationContext();
         	CharSequence text = "No network connection!";
         	int duration = Toast.LENGTH_LONG;
@@ -71,9 +72,7 @@ public class MainMenu extends Activity implements OnClickListener {
         
         videoButton.setOnClickListener(this);
         audioButton.setOnClickListener(this);
-	}
-    
-    
+	}    
 
 	@Override
 	public void onClick(View v) {
