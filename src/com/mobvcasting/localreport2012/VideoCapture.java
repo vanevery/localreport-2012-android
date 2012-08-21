@@ -2,6 +2,8 @@ package com.mobvcasting.localreport2012;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.hardware.Camera;
+import android.hardware.Camera.Size;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.net.ConnectivityManager;
@@ -30,9 +33,26 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 
 	public static final String LOGTAG = "VIDEOCAPTURE";
 
+	public static final int HIGH_QUALITY = 1;
+	public static final int LOW_QUALITY = 0;
+	private int recordingQuality = LOW_QUALITY;
+	
+	public static final int TARGET_WIDTH = 720;
+	public static final int TARGET_HEIGHT = 480;
+	public static final int LOW_TARGET_BITRATE = 700000;
+	public static final int HIGH_TARGET_BITRATE = 1500000;
+	public static final int TARGET_FRAMERATE = 30;
+	
+	int videoWidth = 0;
+	int videoHeight = 0;
+	int videoFramerate = 0;
+	int videoBitrate = LOW_TARGET_BITRATE;
+	int videoEncoder = MediaRecorder.VideoEncoder.H264;
+	int videoSource = MediaRecorder.VideoSource.DEFAULT;
+	
 	private MediaRecorder recorder;
 	private SurfaceHolder holder;
-	private CamcorderProfile camcorderProfile;
+	//private CamcorderProfile camcorderProfile;
 	private Camera camera;	
 	private TextView countdownText;
 	private Button startButton;
@@ -59,12 +79,15 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
 		//camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_LOW);
-		camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+		//camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+		
 	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    if (cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()) {
-	    	camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+	    	//camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+	    	recordingQuality = HIGH_QUALITY;
         	Toast.makeText(this, "WiFi Enabled, High Quality Recordng", Toast.LENGTH_LONG).show();
 	    } else if (cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isAvailable()) {
+	    	recordingQuality = LOW_QUALITY;
 	    	Toast.makeText(this, "WiFi Not Enabled, Low Quality Recordng", Toast.LENGTH_LONG).show();
 	    } else {
 	    	Toast.makeText(this, "No Network Connection Available, Can Not Record Video", Toast.LENGTH_LONG).show();
@@ -112,56 +135,42 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 			recorder.setCamera(camera);
 		}
 		
-		//recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-		recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
+		recorder.setVideoSource(videoSource);
 		recorder.setMaxDuration((int)(RECORD_TIME + ONE_SECOND));
-		//recorder.setMaxFileSize(5000000); // Approximately 5 megabytesx
+		//recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
 
-		//recorder.setProfile(camcorderProfile);
 		recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-		//recorder.setVideoSize(640, 480);
-		recorder.setVideoSize(camcorderProfile.videoFrameWidth, camcorderProfile.videoFrameHeight);
-		recorder.setVideoFrameRate(30);
-		recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-		recorder.setVideoEncodingBitRate(500000);
 		
-		// This is all very sloppy
-		if (camcorderProfile.fileFormat == MediaRecorder.OutputFormat.THREE_GPP) {
-        	try {
-				File newFile = File.createTempFile("localreport", ".3gp", Environment.getExternalStorageDirectory());
-				filePath = newFile.getAbsolutePath();
-				
-			} catch (IOException e) {
-				Log.v(LOGTAG,"Couldn't create file");
-				e.printStackTrace();
-				finish();
-			}
-		} else if (camcorderProfile.fileFormat == MediaRecorder.OutputFormat.MPEG_4) {
-        	try {
-				File newFile = File.createTempFile("localreport", ".mp4", Environment.getExternalStorageDirectory());
-				filePath = newFile.getAbsolutePath();
-
-			} catch (IOException e) {
-				Log.v(LOGTAG,"Couldn't create file");
-				e.printStackTrace();
-				finish();
-			}
+		//Looping through settings in SurfaceChanged
+		System.out.println("Size: " + videoWidth + " " + videoHeight);
+		if (videoWidth > 0) {
+			recorder.setVideoSize(videoWidth, videoHeight);
 		} else {
-        	try {
-				File newFile = File.createTempFile("localreport", ".mp4", Environment.getExternalStorageDirectory());
-				filePath = newFile.getAbsolutePath();
+			recorder.setVideoSize(TARGET_WIDTH, TARGET_HEIGHT);
+		}
 
-        	} catch (IOException e) {
-				Log.v(LOGTAG,"Couldn't create file");
-				e.printStackTrace();
-				finish();
-			}
-
+		//Looping through settings in SurfaceChanged
+		System.out.println("Framerate: " + videoFramerate);
+		if (videoFramerate > 0) {
+			recorder.setVideoFrameRate(videoFramerate);
+		} else {
+			recorder.setVideoFrameRate(TARGET_FRAMERATE);
 		}
 		
-		recorder.setOutputFile(filePath);
+		recorder.setVideoEncoder(videoEncoder);
+
+		if (recordingQuality == HIGH_QUALITY) {
+			videoBitrate = HIGH_TARGET_BITRATE;
+		} else {
+			videoBitrate = LOW_TARGET_BITRATE;
+		}
+		recorder.setVideoEncodingBitRate(videoBitrate);
 		
 		try {
+			File newFile = File.createTempFile("localreport", ".mp4", Environment.getExternalStorageDirectory());
+			filePath = newFile.getAbsolutePath();
+			recorder.setOutputFile(filePath);
+
 			recorder.prepare();			
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
@@ -240,18 +249,40 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 			}
 
 			try {
-				Camera.Parameters p = camera.getParameters();
-
-				//p.setPreviewSize(720, 480);
-				//p.setPreviewFrameRate(30);
-				 p.setPreviewSize(camcorderProfile.videoFrameWidth, camcorderProfile.videoFrameHeight);
-				 Log.v(LOGTAG,"Preview Size: " + camcorderProfile.videoFrameWidth + " " + camcorderProfile.videoFrameHeight);
-			     p.setPreviewFrameRate(camcorderProfile.videoFrameRate);
-				 
-			     p.getSupportedPreviewFrameRates();
-				 
+				Camera.Parameters cParameters = camera.getParameters();
 				
-				camera.setParameters(p);
+				List<Size> supportedSizes = cParameters.getSupportedPreviewSizes();
+				Iterator<Size> supportedSizesI = supportedSizes.iterator();
+				while (supportedSizesI.hasNext()) {
+					Size cSize = supportedSizesI.next();
+					System.out.println("Supports: " + cSize);
+					if (cSize.width <= TARGET_WIDTH && TARGET_WIDTH - cSize.width < TARGET_WIDTH - videoWidth) {
+						videoWidth = cSize.width;
+						videoHeight = cSize.height;
+						System.out.println("Using");
+					}
+				}
+			    if (videoWidth > 0) {
+			    	cParameters.setPreviewSize(videoWidth, videoHeight);
+					Log.v(LOGTAG,"Preview Size: " + videoWidth + " " + videoHeight);
+			    }
+				
+				List<Integer> supportedFramerates = cParameters.getSupportedPreviewFrameRates();
+				Iterator<Integer> supportedFrameratesI = supportedFramerates.iterator();
+				while (supportedFrameratesI.hasNext()) {
+					Integer cFramerate = supportedFrameratesI.next();
+					System.out.println("Supports: " + cFramerate);
+					if (cFramerate <= TARGET_FRAMERATE && TARGET_FRAMERATE - cFramerate < TARGET_FRAMERATE - videoFramerate) {
+						videoFramerate = cFramerate;
+						System.out.println("Using");
+					}
+				}
+				if (videoFramerate > 0) {
+			    	cParameters.setPreviewFrameRate(videoFramerate);
+			    	Log.v(LOGTAG,"Framerate: " + videoFramerate);
+				}
+
+			    camera.setParameters(cParameters);
 				
 				camera.setPreviewDisplay(holder);
 				camera.startPreview();
