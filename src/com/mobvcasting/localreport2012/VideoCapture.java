@@ -26,6 +26,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -107,6 +108,7 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		setContentView(R.layout.activity_video_capture);
 
 		cameraView = (SurfaceView) findViewById(R.id.CameraView);
+		
 		holder = cameraView.getHolder();
 		holder.addCallback(this);
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -155,6 +157,7 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		System.out.println("Size: " + videoWidth + " " + videoHeight);
 		if (videoWidth > 0) {
 			recorder.setVideoSize(videoWidth, videoHeight);
+
 		} else {
 			// This shouldn't ever happen
 			Log.v(LOGTAG,"Please report an error with setVideoSize");
@@ -238,10 +241,56 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		if (usecamera) {
 			camera = Camera.open();
 			
+			Camera.Parameters cParameters = camera.getParameters();
+			
+			List<Size> supportedSizes = cParameters.getSupportedPreviewSizes();
+			Iterator<Size> supportedSizesI = supportedSizes.iterator();
+			int currentDiff = Integer.MAX_VALUE;
+			while (supportedSizesI.hasNext()) {
+				Size cSize = supportedSizesI.next();
+				System.out.println("Supports: " + cSize.width + " " + cSize.height);
+				//if (cSize.width <= TARGET_WIDTH && TARGET_WIDTH - cSize.width < TARGET_WIDTH - videoWidth)
+				int testDiff = Math.abs(TARGET_WIDTH - cSize.width) + Math.abs(TARGET_HEIGHT - cSize.height);
+				if (testDiff < currentDiff) 
+				{
+					currentDiff = testDiff;
+					videoWidth = cSize.width;
+					videoHeight = cSize.height;
+					System.out.println("Using");
+				}
+			}
+		    if (videoWidth > 0) {
+		    	cParameters.setPreviewSize(videoWidth, videoHeight);
+				Log.v(LOGTAG,"Preview Size: " + videoWidth + " " + videoHeight);
+		    }
+			
+			List<Integer> supportedFramerates = cParameters.getSupportedPreviewFrameRates();
+			Iterator<Integer> supportedFrameratesI = supportedFramerates.iterator();
+			while (supportedFrameratesI.hasNext()) {
+				Integer cFramerate = supportedFrameratesI.next();
+				System.out.println("Supports: " + cFramerate);
+				if (cFramerate <= TARGET_FRAMERATE && TARGET_FRAMERATE - cFramerate < TARGET_FRAMERATE - videoFramerate) {
+					videoFramerate = cFramerate;
+					System.out.println("Using");
+				}
+			}
+			if (videoFramerate > 0) {
+		    	cParameters.setPreviewFrameRate(videoFramerate);
+		    	Log.v(LOGTAG,"Framerate: " + videoFramerate);
+			}
+
+		    camera.setParameters(cParameters);
+		    
+		    cameraView.setLayoutParams(new LinearLayout.LayoutParams(videoWidth,videoHeight));
+			
 			try {
 				camera.setPreviewDisplay(holder);
 				camera.startPreview();
 				previewRunning = true;
+				
+				
+				prepareRecorder();	
+
 			}
 			catch (IOException e) {
 				Log.e(LOGTAG,e.getMessage());
@@ -254,64 +303,6 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		Log.v(LOGTAG, "surfaceChanged");
-
-		if (!recording && usecamera) {
-			if (previewRunning){
-				camera.stopPreview();
-			}
-
-			try {
-				Camera.Parameters cParameters = camera.getParameters();
-				
-				List<Size> supportedSizes = cParameters.getSupportedPreviewSizes();
-				Iterator<Size> supportedSizesI = supportedSizes.iterator();
-				int currentDiff = Integer.MAX_VALUE;
-				while (supportedSizesI.hasNext()) {
-					Size cSize = supportedSizesI.next();
-					System.out.println("Supports: " + cSize.width + " " + cSize.height);
-					//if (cSize.width <= TARGET_WIDTH && TARGET_WIDTH - cSize.width < TARGET_WIDTH - videoWidth)
-					int testDiff = Math.abs(TARGET_WIDTH - cSize.width) + Math.abs(TARGET_HEIGHT - cSize.height);
-					if (testDiff < currentDiff) 
-					{
-						currentDiff = testDiff;
-						videoWidth = cSize.width;
-						videoHeight = cSize.height;
-						System.out.println("Using");
-					}
-				}
-			    if (videoWidth > 0) {
-			    	cParameters.setPreviewSize(videoWidth, videoHeight);
-					Log.v(LOGTAG,"Preview Size: " + videoWidth + " " + videoHeight);
-			    }
-				
-				List<Integer> supportedFramerates = cParameters.getSupportedPreviewFrameRates();
-				Iterator<Integer> supportedFrameratesI = supportedFramerates.iterator();
-				while (supportedFrameratesI.hasNext()) {
-					Integer cFramerate = supportedFrameratesI.next();
-					System.out.println("Supports: " + cFramerate);
-					if (cFramerate <= TARGET_FRAMERATE && TARGET_FRAMERATE - cFramerate < TARGET_FRAMERATE - videoFramerate) {
-						videoFramerate = cFramerate;
-						System.out.println("Using");
-					}
-				}
-				if (videoFramerate > 0) {
-			    	cParameters.setPreviewFrameRate(videoFramerate);
-			    	Log.v(LOGTAG,"Framerate: " + videoFramerate);
-				}
-
-			    camera.setParameters(cParameters);
-				
-				camera.setPreviewDisplay(holder);
-				camera.startPreview();
-				previewRunning = true;
-			}
-			catch (IOException e) {
-				Log.e(LOGTAG,e.getMessage());
-				e.printStackTrace();
-			}	
-			
-			prepareRecorder();	
-		}
 	}
 
 	
