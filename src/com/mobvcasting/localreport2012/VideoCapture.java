@@ -49,6 +49,9 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	int videoBitrate = LOW_TARGET_BITRATE;
 	int videoEncoder = MediaRecorder.VideoEncoder.H264;
 	int videoSource = MediaRecorder.VideoSource.DEFAULT;
+	int videoFormat = MediaRecorder.OutputFormat.MPEG_4;
+	
+	CamcorderProfile highQualityProfile;
 	
 	private MediaRecorder recorder;
 	private SurfaceHolder holder;
@@ -79,7 +82,14 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
 		//camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_LOW);
-		//camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+		// Check that H.264 is available
+		highQualityProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+		if (highQualityProfile.videoCodec != videoEncoder) {
+        	Toast.makeText(this, "Ut Oh, H.264 isn't available, we don't support your phone", Toast.LENGTH_LONG).show();
+        	finish();
+        	
+        	// Sadly H.263 isn't going to work for us
+		}
 		
 	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    if (cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()) {
@@ -139,13 +149,15 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		recorder.setMaxDuration((int)(RECORD_TIME + ONE_SECOND));
 		//recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
 
-		recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+		recorder.setOutputFormat(videoFormat);
 		
 		//Looping through settings in SurfaceChanged
 		System.out.println("Size: " + videoWidth + " " + videoHeight);
 		if (videoWidth > 0) {
 			recorder.setVideoSize(videoWidth, videoHeight);
 		} else {
+			// This shouldn't ever happen
+			Log.v(LOGTAG,"Please report an error with setVideoSize");
 			recorder.setVideoSize(TARGET_WIDTH, TARGET_HEIGHT);
 		}
 
@@ -253,10 +265,15 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 				
 				List<Size> supportedSizes = cParameters.getSupportedPreviewSizes();
 				Iterator<Size> supportedSizesI = supportedSizes.iterator();
+				int currentDiff = Integer.MAX_VALUE;
 				while (supportedSizesI.hasNext()) {
 					Size cSize = supportedSizesI.next();
-					System.out.println("Supports: " + cSize);
-					if (cSize.width <= TARGET_WIDTH && TARGET_WIDTH - cSize.width < TARGET_WIDTH - videoWidth) {
+					System.out.println("Supports: " + cSize.width + " " + cSize.height);
+					//if (cSize.width <= TARGET_WIDTH && TARGET_WIDTH - cSize.width < TARGET_WIDTH - videoWidth)
+					int testDiff = Math.abs(TARGET_WIDTH - cSize.width) + Math.abs(TARGET_HEIGHT - cSize.height);
+					if (testDiff < currentDiff) 
+					{
+						currentDiff = testDiff;
 						videoWidth = cSize.width;
 						videoHeight = cSize.height;
 						System.out.println("Using");
