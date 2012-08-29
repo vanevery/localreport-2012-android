@@ -300,11 +300,9 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		
 	}
 
-
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		Log.v(LOGTAG, "surfaceChanged");
 	}
-
 	
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		Log.v(LOGTAG, "surfaceDestroyed");

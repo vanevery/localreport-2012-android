@@ -21,25 +21,32 @@ public class TwilioPhone implements Twilio.InitListener
 
     public TwilioPhone(Context context)
     {
-    	Log.v(LOGTAG,"Calling Initialize on Twilio");
-        Twilio.initialize(context, this /* Twilio.InitListener */);
-        appContext = context;
+    	if (!Twilio.isInitialized()) {
+    		Log.v(LOGTAG,"Calling Initialize on Twilio");
+    		Twilio.initialize(context, this /* Twilio.InitListener */);
+            appContext = context;
+    	}
+    	else 
+    	{
+            appContext = context;
+    		Log.v(LOGTAG,"Twilio already initialized");
+    		onInitialized();
+    	}
     }
 
     /* Twilio.InitListener method */
     @Override
-    public void onInitialized()
-    {
+    public void onInitialized() {
         Log.v(LOGTAG, "Twilio SDK is Initialized");
-
-        try {
-            String capabilityToken = HttpHelper.httpGet(appContext.getString(R.string.twilio_auth_url));
-            Log.v(LOGTAG, appContext.getString(R.string.twilio_auth_url) + " Auth Token: " + capabilityToken);
-            
-            device = Twilio.createDevice(capabilityToken, null /* DeviceListener */);
-            Log.v(LOGTAG,"Created Twilio Device");
+    	try {
+    		Log.v(LOGTAG,"Auth URL: "+appContext.getString(R.string.twilio_auth_url));
+    		String capabilityToken = HttpHelper.httpGet(appContext.getString(R.string.twilio_auth_url));
+    		
+    		Log.v(LOGTAG, appContext.getString(R.string.twilio_auth_url) + " Auth Token: " + capabilityToken);
+    		device = Twilio.createDevice(capabilityToken, null /* DeviceListener */);
+    		Log.v(LOGTAG,"Created Twilio Device");
         } catch (Exception e) {
-            Log.e(LOGTAG, "Failed to obtain capability token: " + e.getLocalizedMessage());
+            Log.e(LOGTAG, "Failed to obtain capability token: " + e.toString());
         }
     }
 
@@ -52,9 +59,16 @@ public class TwilioPhone implements Twilio.InitListener
 
     public void connect()
     {
-        connection = device.connect(null /* parameters */, null /* ConnectionListener */);
-        if (connection == null)
+    	if (connection == null || connection.getState() == Connection.State.DISCONNECTED) {
+    		connection = device.connect(null /* parameters */, null /* ConnectionListener */);
+    	} else {
+    		// Already connected!
+    		Log.v(LOGTAG, "Already connected!");
+    	}
+    	
+        if (connection == null) {
             Log.v(LOGTAG, "Failed to create new connection");
+        }
     }
  
     public void disconnect()
