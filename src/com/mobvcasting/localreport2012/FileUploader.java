@@ -40,6 +40,8 @@ public class FileUploader extends Activity implements OnClickListener {
 	File videoFile;
 	String participantDeviceId;
 	String audioOrVideo = "video";
+	String latitude = null;
+	String longitude = null;
 
 	String postingResult = "";
 	long fileLength = 0;
@@ -79,6 +81,11 @@ public class FileUploader extends Activity implements OnClickListener {
         	
         	if (extras.containsKey("audio_or_video")) {
         		audioOrVideo = extras.getString("audio_or_video");
+        	}
+        	
+        	if (extras.containsKey("latitude") && extras.containsKey("longitude")) {
+        		latitude = extras.getString("latitude");
+        		longitude = extras.getString("longitude");
         	}
 	
 			vut = new UploaderTask();
@@ -122,6 +129,11 @@ public class FileUploader extends Activity implements OnClickListener {
 				multipartentity.addPart("audio_or_video", new StringBody(audioOrVideo));
 				multipartentity.addPart("form_submitted", new StringBody("true"));
 
+				if (latitude != null && longitude != null) {
+					multipartentity.addPart("latitude", new StringBody(latitude));
+					multipartentity.addPart("longitude", new StringBody(longitude));
+				}
+				
 				httppost.setEntity(multipartentity);
 				HttpResponse httpresponse = httpclient.execute(httppost);
 				HttpEntity responseentity = httpresponse.getEntity();

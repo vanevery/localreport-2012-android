@@ -219,6 +219,12 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 			fileUpIntent.putExtra("filePath", filePath);
 			fileUpIntent.putExtra("audio_or_video", "video");
 			fileUpIntent.putExtra("participant_device_id", MainMenu.getUniqueId(this));
+			
+			if (MainMenu.currentLocation != null) {
+				fileUpIntent.putExtra("latitude", MainMenu.currentLocation.getLatitude());
+				fileUpIntent.putExtra("longitude", MainMenu.currentLocation.getLongitude());
+			}
+			
 			startActivity(fileUpIntent);
 			finish();
 		}
