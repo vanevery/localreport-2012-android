@@ -68,7 +68,9 @@ public class FileUploader extends Activity implements OnClickListener {
         	String filePath = extras.getString("filePath");
         	videoFile = new File(filePath);
         	
-        	Toast.makeText(this, videoFile.toString(), Toast.LENGTH_SHORT).show();
+        	if (MainMenu.TESTING) {
+        		Toast.makeText(this, videoFile.toString(), Toast.LENGTH_SHORT).show();
+        	}
         	
         	fileLength = videoFile.length();
         	
@@ -86,6 +88,12 @@ public class FileUploader extends Activity implements OnClickListener {
         	if (extras.containsKey("latitude") && extras.containsKey("longitude")) {
         		latitude = extras.getString("latitude");
         		longitude = extras.getString("longitude");
+        		Log.v(LOGTAG,"Latitude: " + latitude + " Longitude: " + longitude + " passed in");
+        	} else {
+        		if (MainMenu.TESTING) {
+            		Toast.makeText(this, "No Lat, Lon passed through", Toast.LENGTH_SHORT).show();
+        		}
+        		Log.v(LOGTAG,"No Lat Lon Passed Through");
         	}
 	
 			vut = new UploaderTask();
@@ -132,6 +140,8 @@ public class FileUploader extends Activity implements OnClickListener {
 				if (latitude != null && longitude != null) {
 					multipartentity.addPart("latitude", new StringBody(latitude));
 					multipartentity.addPart("longitude", new StringBody(longitude));
+				} else {
+					Log.v(LOGTAG,"latitude and/or longitude are null");
 				}
 				
 				httppost.setEntity(multipartentity);

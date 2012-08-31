@@ -24,6 +24,10 @@ import android.widget.Toast;
 
 public class MainMenu extends Activity implements OnClickListener, LocationListener {
 
+	public static boolean TESTING = true;
+	
+	public static String LOGTAG = "LocalReportMain";
+	
     private static String uniqueId = null;
     private static final String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
 
@@ -52,12 +56,7 @@ public class MainMenu extends Activity implements OnClickListener, LocationListe
 		messageView.setText("UUID: " + MainMenu.getUniqueId(this));
                 
         if (noNetworkConnection()) {
-        	Context context = getApplicationContext();
-        	CharSequence text = "No network data connection!  This app requires a network data connection.  Please connect via WiFi or enable data.";
-        	int duration = Toast.LENGTH_LONG;
-
-        	Toast.makeText(context, text, duration).show();
-        	
+        	Toast.makeText(getApplicationContext(), "No network data connection!  This app requires a network data connection.  Please connect via WiFi or enable data.", Toast.LENGTH_LONG).show();
         	finish();
         }
         
@@ -134,6 +133,11 @@ public class MainMenu extends Activity implements OnClickListener, LocationListe
 	public void onLocationChanged(Location location) {
 		//location.getLatitude() + " " + location.getLongitude()); 		
 		if (location.getProvider().equals(LocationManager.GPS_PROVIDER) || !gpsProviderReady) {
+			Log.v(LOGTAG,location.getProvider() + " " + location.getLatitude() + " " + location.getLongitude());
+			if (TESTING) {
+				Toast.makeText(getApplicationContext(), location.getProvider() + " " + location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+			}
+			
 			currentLocation = location;
 		}
 	}
@@ -150,8 +154,19 @@ public class MainMenu extends Activity implements OnClickListener, LocationListe
 	public void onStatusChanged(String locationProvider, int status, Bundle extras) {
 		if (locationProvider.equals(LocationManager.GPS_PROVIDER)) {
 			if (status == LocationProvider.AVAILABLE) {
+				Log.v(LOGTAG,"GPS Available");
+				if (TESTING) {
+					Toast.makeText(getApplicationContext(), "GPS Available", Toast.LENGTH_SHORT).show();
+				}
+
 				gpsProviderReady = true;
 			} else if (status == LocationProvider.TEMPORARILY_UNAVAILABLE || status == LocationProvider.OUT_OF_SERVICE) {
+				Log.v(LOGTAG,"GPS Unavailable");
+			
+				if (TESTING) {
+					Toast.makeText(getApplicationContext(), "GPS Unavailable", Toast.LENGTH_SHORT).show();
+				}
+				
 				gpsProviderReady = false;
 			}
 		}

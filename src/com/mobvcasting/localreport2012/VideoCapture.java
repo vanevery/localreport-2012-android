@@ -44,6 +44,8 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	public static final int HIGH_TARGET_BITRATE = 1500000;
 	public static final int TARGET_FRAMERATE = 30;
 	
+	//public static final int MAX_FILESIZE = //10 MB
+	
 	int videoWidth = 0;
 	int videoHeight = 0;
 	int videoFramerate = 0;
@@ -51,6 +53,8 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	int videoEncoder = MediaRecorder.VideoEncoder.H264;
 	int videoSource = MediaRecorder.VideoSource.DEFAULT;
 	int videoFormat = MediaRecorder.OutputFormat.MPEG_4;
+	
+	
 	
 	CamcorderProfile highQualityProfile;
 	
@@ -60,6 +64,8 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	private Camera camera;	
 	private TextView countdownText;
 	private Button startButton;
+	private Button cancelButton;
+	
 	private SurfaceView cameraView;
 	
 	private static long RECORD_TIME = 20000;
@@ -77,9 +83,9 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		//requestWindowFeature(Window.FEATURE_NO_TITLE);
+		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+		//		WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
 		//camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_LOW);
@@ -87,6 +93,7 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		highQualityProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
 		if (highQualityProfile.videoCodec != videoEncoder) {
         	Toast.makeText(this, "Ut Oh, H.264 isn't available, we don't support your phone", Toast.LENGTH_LONG).show();
+        	
         	finish();
         	
         	// Sadly H.263 isn't going to work for us
@@ -96,10 +103,14 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	    if (cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()) {
 	    	//camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
 	    	recordingQuality = HIGH_QUALITY;
-        	Toast.makeText(this, "WiFi Enabled, High Quality Recordng", Toast.LENGTH_LONG).show();
+	    	if (MainMenu.TESTING) {
+	    		Toast.makeText(this, "WiFi Enabled, High Quality Recordng", Toast.LENGTH_LONG).show();
+	    	}
 	    } else if (cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isAvailable()) {
 	    	recordingQuality = LOW_QUALITY;
-	    	Toast.makeText(this, "WiFi Not Enabled, Low Quality Recordng", Toast.LENGTH_LONG).show();
+	    	if (MainMenu.TESTING) {
+	    		Toast.makeText(this, "WiFi Not Enabled, Low Quality Recordng", Toast.LENGTH_LONG).show();
+	    	}
 	    } else {
 	    	Toast.makeText(this, "No Network Connection Available, Can Not Record Video", Toast.LENGTH_LONG).show();
 	    	finish();
@@ -118,6 +129,9 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		
 		startButton = (Button) this.findViewById(R.id.StartButton);
 		startButton.setOnClickListener(this);
+		
+		cancelButton = (Button) this.findViewById(R.id.CancelButton);
+		cancelButton.setOnClickListener(this);
 		
 		countdownText = (TextView) this.findViewById(R.id.CountDownTimer);
 		countDownTimer = new CountDownTimer(RECORD_TIME, ONE_SECOND) {
@@ -221,8 +235,11 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 			fileUpIntent.putExtra("participant_device_id", MainMenu.getUniqueId(this));
 			
 			if (MainMenu.currentLocation != null) {
-				fileUpIntent.putExtra("latitude", MainMenu.currentLocation.getLatitude());
-				fileUpIntent.putExtra("longitude", MainMenu.currentLocation.getLongitude());
+				fileUpIntent.putExtra("latitude", ""+MainMenu.currentLocation.getLatitude());
+				fileUpIntent.putExtra("longitude", ""+MainMenu.currentLocation.getLongitude());
+				Log.v(LOGTAG,"MainMenu.currentLocation is " + MainMenu.currentLocation.toString());
+			} else {
+				Log.v(LOGTAG,"MainMenu.currentLocation is null");
 			}
 			
 			startActivity(fileUpIntent);
@@ -239,6 +256,9 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 				Log.v(LOGTAG, "Recording Started");
 				startButton.setEnabled(false);
 			}
+		} else if (v == cancelButton) {
+			// I think surfacedestroyed will take care of deinitalization
+			finish();
 		}
 	}
 
