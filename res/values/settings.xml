@@ -2,5 +2,5 @@
 <resources>
     <string name="twilio_auth_url">http://live.whitmanlocalreport.net:8080/twilio/twilio_auth.php</string>
     <string name="upload_url">http://live.whitmanlocalreport.net:8080/post.php</string>
-    <string name="default_participant_id">1</string>
+    <string name="default_device_participant_id"></string>
 </resources>

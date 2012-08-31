@@ -26,17 +26,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class FileUploader extends Activity {
+public class FileUploader extends Activity implements OnClickListener {
 	
 	public static String LOGTAG = "FILEUPLOADER";
 	
 	File videoFile;
-	String participantId;
+	String participantDeviceId;
 	String audioOrVideo = "video";
 
 	String postingResult = "";
@@ -46,6 +48,9 @@ public class FileUploader extends Activity {
 	
 	ProgressBar mProgress;
     int mProgressStatus = 0;
+    UploaderTask vut;
+    
+    Button cancelButton;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -65,17 +70,18 @@ public class FileUploader extends Activity {
         	
         	fileLength = videoFile.length();
         	
-        	if (extras.containsKey("participant_id")) {
-        		participantId = extras.getString("participant_id");
+        	if (extras.containsKey("participant_device_id")) {
+        		participantDeviceId = extras.getString("participant_device_id");
+        		Log.v(LOGTAG,"participant_device_id " + participantDeviceId);
         	} else {
-        		participantId = getString(R.string.default_participant_id);
+        		participantDeviceId = getString(R.string.default_device_participant_id);
         	}
         	
         	if (extras.containsKey("audio_or_video")) {
         		audioOrVideo = extras.getString("audio_or_video");
         	}
 	
-			UploaderTask vut = new UploaderTask();
+			vut = new UploaderTask();
 			vut.execute();
 			
         } else {
@@ -95,6 +101,8 @@ public class FileUploader extends Activity {
 		setContentView(R.layout.activity_video_uploader);
 		textview = (TextView) findViewById(R.id.textview);
 		mProgress = (ProgressBar) findViewById(R.id.uploadProgress);
+		cancelButton = (Button) findViewById(R.id.cancelButton);
+		cancelButton.setOnClickListener(this);
 	}
 	
 	class UploaderTask extends AsyncTask<Void, String, String> implements ProgressListener 
@@ -110,7 +118,7 @@ public class FileUploader extends Activity {
 
 			try {
 				multipartentity.addPart("file", new FileBody(videoFile));
-				multipartentity.addPart("participant_id", new StringBody(participantId));
+				multipartentity.addPart("participant_device_id", new StringBody(participantDeviceId));
 				multipartentity.addPart("audio_or_video", new StringBody(audioOrVideo));
 				multipartentity.addPart("form_submitted", new StringBody("true"));
 
@@ -194,5 +202,16 @@ public class FileUploader extends Activity {
 			this.transferred++;
 			this.listener.transferred(this.transferred);
 		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		if (v == cancelButton) {
+			if (vut.getStatus() == AsyncTask.Status.RUNNING) {
+				vut.cancel(true);
+			}
+			finish();
+		}
+		
 	}
 }
