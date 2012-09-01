@@ -6,8 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.hardware.Camera;
@@ -18,6 +20,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -33,6 +36,8 @@ import android.widget.Toast;
 public class VideoCapture extends Activity implements OnClickListener, SurfaceHolder.Callback {
 
 	public static final String LOGTAG = "VIDEOCAPTURE";
+
+    private LocationTracker locationTracker;
 
 	public static final int HIGH_QUALITY = 1;
 	public static final int LOW_QUALITY = 0;
@@ -145,6 +150,10 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		    	 countdownText.setText("Recording Complete");
 		     }
 		};
+		
+        bindService(new Intent(VideoCapture.this, 
+                LocationTracker.class), locationTrackerConnection, Context.BIND_AUTO_CREATE);        
+		
 	}
 	
     @Override
@@ -234,10 +243,10 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 			fileUpIntent.putExtra("audio_or_video", "video");
 			fileUpIntent.putExtra("participant_device_id", MainMenu.getUniqueId(this));
 			
-			if (MainMenu.currentLocation != null) {
-				fileUpIntent.putExtra("latitude", ""+MainMenu.currentLocation.getLatitude());
-				fileUpIntent.putExtra("longitude", ""+MainMenu.currentLocation.getLongitude());
-				Log.v(LOGTAG,"MainMenu.currentLocation is " + MainMenu.currentLocation.toString());
+			if (locationTracker.currentLocation != null) {
+				fileUpIntent.putExtra("latitude", ""+locationTracker.currentLocation.getLatitude());
+				fileUpIntent.putExtra("longitude", ""+locationTracker.currentLocation.getLongitude());
+				Log.v(LOGTAG,"MainMenu.currentLocation is " + locationTracker.currentLocation.toString());
 			} else {
 				Log.v(LOGTAG,"MainMenu.currentLocation is null");
 			}
@@ -344,4 +353,38 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 			camera.release();
 		}
 	}
+	
+	public void onDestroy() {
+		unbindService(locationTrackerConnection);
+		super.onDestroy();
+	}
+	
+	
+	private ServiceConnection locationTrackerConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // This is called when the connection with the service has been
+            // established, giving us the service object we can use to
+            // interact with the service.  Because we have bound to a explicit
+            // service that we know is running in our own process, we can
+            // cast its IBinder to a concrete class and directly access it.
+            locationTracker = ((LocationTracker.LocalBinder)service).getService();
+
+            if (MainMenu.TESTING) {
+                // Tell the user about this for our demo.
+            	Toast.makeText(VideoCapture.this, "Connected", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            // This is called when the connection with the service has been
+            // unexpectedly disconnected -- that is, its process crashed.
+            // Because it is running in our same process, we should never
+            // see this happen.
+        	locationTracker = null;
+        	
+        	if (MainMenu.TESTING) {
+        		Toast.makeText(VideoCapture.this, "Disconnected", Toast.LENGTH_SHORT).show();
+        	}
+        }
+    };	
 }

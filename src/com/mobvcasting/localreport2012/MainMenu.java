@@ -9,9 +9,12 @@ import android.location.LocationProvider;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
@@ -22,7 +25,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainMenu extends Activity implements OnClickListener, LocationListener {
+public class MainMenu extends Activity implements OnClickListener {
 
 	public static boolean TESTING = true;
 	
@@ -30,14 +33,11 @@ public class MainMenu extends Activity implements OnClickListener, LocationListe
 	
     private static String uniqueId = null;
     private static final String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
-
-    public static Location currentLocation = null;
     
 	Button videoButton, audioButton;
 	TextView messageView;
 	
-	LocationManager locationManager;
-	boolean gpsProviderReady = false;
+    private LocationTracker locationTracker;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,11 +60,8 @@ public class MainMenu extends Activity implements OnClickListener, LocationListe
         	finish();
         }
         
-		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-		// 5 minutes, 50 meters
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000l, 50.0f, this);
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000l, 50.0f, this);
+        bindService(new Intent(MainMenu.this, 
+                LocationTracker.class), locationTrackerConnection, Context.BIND_AUTO_CREATE);        
     }
 
     @Override
@@ -87,11 +84,7 @@ public class MainMenu extends Activity implements OnClickListener, LocationListe
 	}
 	
 	public void onDestroy() {
-		
-		if (locationManager != null) {
-			locationManager.removeUpdates(this);
-		}
-		
+		unbindService(locationTrackerConnection);
 		super.onDestroy();
 	}
 	
@@ -129,46 +122,31 @@ public class MainMenu extends Activity implements OnClickListener, LocationListe
         return uniqueId;
     }
 
-	@Override
-	public void onLocationChanged(Location location) {
-		//location.getLatitude() + " " + location.getLongitude()); 		
-		if (location.getProvider().equals(LocationManager.GPS_PROVIDER) || !gpsProviderReady) {
-			Log.v(LOGTAG,location.getProvider() + " " + location.getLatitude() + " " + location.getLongitude());
-			if (TESTING) {
-				Toast.makeText(getApplicationContext(), location.getProvider() + " " + location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
-			}
-			
-			currentLocation = location;
-		}
-	}
+    private ServiceConnection locationTrackerConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // This is called when the connection with the service has been
+            // established, giving us the service object we can use to
+            // interact with the service.  Because we have bound to a explicit
+            // service that we know is running in our own process, we can
+            // cast its IBinder to a concrete class and directly access it.
+            locationTracker = ((LocationTracker.LocalBinder)service).getService();
 
-	@Override
-	public void onProviderDisabled(String locationProvider) {
-	}
+            if (TESTING) {
+                // Tell the user about this for our demo.
+            	Toast.makeText(MainMenu.this, "Connected", Toast.LENGTH_SHORT).show();
+            }
+        }
 
-	@Override
-	public void onProviderEnabled(String locationProvider) {
-	}
-
-	@Override
-	public void onStatusChanged(String locationProvider, int status, Bundle extras) {
-		if (locationProvider.equals(LocationManager.GPS_PROVIDER)) {
-			if (status == LocationProvider.AVAILABLE) {
-				Log.v(LOGTAG,"GPS Available");
-				if (TESTING) {
-					Toast.makeText(getApplicationContext(), "GPS Available", Toast.LENGTH_SHORT).show();
-				}
-
-				gpsProviderReady = true;
-			} else if (status == LocationProvider.TEMPORARILY_UNAVAILABLE || status == LocationProvider.OUT_OF_SERVICE) {
-				Log.v(LOGTAG,"GPS Unavailable");
-			
-				if (TESTING) {
-					Toast.makeText(getApplicationContext(), "GPS Unavailable", Toast.LENGTH_SHORT).show();
-				}
-				
-				gpsProviderReady = false;
-			}
-		}
-	}
+        public void onServiceDisconnected(ComponentName className) {
+            // This is called when the connection with the service has been
+            // unexpectedly disconnected -- that is, its process crashed.
+            // Because it is running in our same process, we should never
+            // see this happen.
+        	locationTracker = null;
+        	
+        	if (TESTING) {
+        		Toast.makeText(MainMenu.this, "Disconnected", Toast.LENGTH_SHORT).show();
+        	}
+        }
+    };
 }
