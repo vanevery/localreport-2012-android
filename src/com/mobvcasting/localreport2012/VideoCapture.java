@@ -171,8 +171,14 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		}
 		
 		recorder.setVideoSource(videoSource);
-		recorder.setMaxDuration((int)(RECORD_TIME + ONE_SECOND));
-		//recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
+
+		// Not sure I really want to do this as I'll have to implment onInfo or whatever
+		try {
+			recorder.setMaxDuration((int)(RECORD_TIME + ONE_SECOND));
+			//recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
+		} catch (RuntimeException re) {
+			Log.v(LOGTAG,re.getMessage());
+		}
 
 		recorder.setOutputFormat(videoFormat);
 		
