@@ -59,8 +59,6 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	int videoSource = MediaRecorder.VideoSource.DEFAULT;
 	int videoFormat = MediaRecorder.OutputFormat.MPEG_4;
 	
-	
-	
 	CamcorderProfile highQualityProfile;
 	
 	private MediaRecorder recorder;
@@ -150,7 +148,7 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		    	 countdownText.setText("Recording Complete");
 		     }
 		};
-		
+
         bindService(new Intent(VideoCapture.this, 
                 LocationTracker.class), locationTrackerConnection, Context.BIND_AUTO_CREATE);        
 		
