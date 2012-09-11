@@ -31,7 +31,6 @@ public class LocationTracker extends Service implements LocationListener {
 		// 5 minutes, 50 meters
 		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000l, 50.0f, this);
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000l, 50.0f, this);
-	 
     }
 
 	@Override

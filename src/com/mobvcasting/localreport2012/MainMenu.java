@@ -2,10 +2,6 @@ package com.mobvcasting.localreport2012;
 
 import java.util.UUID;
 
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -45,8 +41,8 @@ public class MainMenu extends Activity implements OnClickListener {
         
         setContentView(R.layout.activity_main_menu);
         
-        videoButton = (Button) this.findViewById(R.id.button1);
-        audioButton = (Button) this.findViewById(R.id.button2);
+        videoButton = (Button) this.findViewById(R.id.shoot_button);
+        audioButton = (Button) this.findViewById(R.id.call_button);
         
         videoButton.setOnClickListener(this);
         audioButton.setOnClickListener(this);
@@ -57,11 +53,9 @@ public class MainMenu extends Activity implements OnClickListener {
                 
         if (noNetworkConnection()) {
         	Toast.makeText(getApplicationContext(), "No network data connection!  This app requires a network data connection.  Please connect via WiFi or enable data.", Toast.LENGTH_LONG).show();
+        	Log.v(LOGTAG,"No network connection!");
         	finish();
         }
-        
-        bindService(new Intent(MainMenu.this, 
-                LocationTracker.class), locationTrackerConnection, Context.BIND_AUTO_CREATE);        
     }
 
     @Override
@@ -73,12 +67,18 @@ public class MainMenu extends Activity implements OnClickListener {
 	 Saving Battery life..  Not sure we want to do this
 	 */
 	public void onPause() {
+		unbindService(locationTrackerConnection);
+		
 		super.onPause(); 
 		//locationManager.removeUpdates(this);
 	}
     
 	public void onResume() {
 		super.onResume();
+
+		bindService(new Intent(MainMenu.this, 
+                LocationTracker.class), locationTrackerConnection, Context.BIND_AUTO_CREATE);        
+		
 		//locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 6000l, 5.0f, this);
 		//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 6000l, 5.0f, this);
 	}

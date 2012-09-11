@@ -1,10 +1,9 @@
 <resources>    
     <string name="app_name">Local Report 2012</string>
+    <string name="default_message">No Messages</string>    
     
-    <string name="main_menu_top">Welcome to Local Report 2012</string>
-    <string name="title_activity_main_menu">Local Report 2012</string>
-    <string name="main_menu_button1">Shoot Video</string>
-    <string name="main_menu_button2">Make Audio Call</string>
+    <string name="shoot_button">Shoot</string>
+    <string name="call_button">Dial</string>
     
     <string name="title_activity_video_capture">Capture and Send Video</string>
     
