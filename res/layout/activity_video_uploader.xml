@@ -1,27 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
-<TextView
-    android:id="@+id/textview"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text=""
-    />
+    android:background="@color/background">
+ 
+    <ImageView
+        android:id="@+id/map_bg"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:scaleType="centerCrop"
+		android:layout_marginTop="5dp"
+    	android:layout_marginBottom="5dp"
+        android:src="@drawable/map_bg" />
+    
+	<LinearLayout
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:orientation="vertical" >
 
-<ProgressBar
-    android:id="@+id/uploadProgress"
-    style="?android:attr/progressBarStyleHorizontal"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:indeterminate="false" />
+		<LinearLayout
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:orientation="horizontal"
+    		android:layout_weight="0.25" >
 
-<Button
-    android:id="@+id/cancelButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Cancel Upload" />
+			<LinearLayout
+    			android:layout_width="fill_parent"
+	    		android:layout_height="wrap_content"
+    			android:orientation="horizontal"
+    			android:padding="5dp" >
+		    	    
+				<TextView
+    	    		android:id="@+id/upload_title"
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_gravity="center_horizontal"
+	        		android:layout_marginTop="5dp"
+    	    		android:layout_marginLeft="10dp"
+        			android:layout_marginRight="10dp"
+        			android:background="@color/text_background"
+	        		android:padding="@dimen/padding_medium"
+    	    		android:text="@string/upload_title"
+        			android:textColor="@color/text_white_color"
+        			android:textSize="15sp"
+         		/>
+			
+				<ImageView 
+				    android:id="@+id/transferring_arrow"
+				    android:src="@drawable/transferring_arrow"
+			    	android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center_vertical"
+			    />
+			
+			</LinearLayout>
 
+		</LinearLayout>
+		
+		<LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="0dip"
+		    android:layout_weight="0.50"
+		    android:background="@color/background_transparent"
+		    android:gravity="center_vertical|center_horizontal"
+		    android:orientation="vertical" >
+
+		    <LinearLayout
+		    	android:layout_width="fill_parent"
+		    	android:layout_height="0dip"
+		    	android:layout_weight="0.25"
+		    	android:gravity="center_vertical|center_horizontal"
+		    	android:orientation="vertical" >
+		    </LinearLayout>
+		    					
+			<LinearLayout
+			    android:layout_width="fill_parent"
+			    android:layout_height="0dip"
+			    android:layout_weight="0.50"
+			    android:background="@color/background"
+			    android:gravity="center_vertical|center_horizontal"
+			    android:orientation="vertical" >
+
+				<TextView
+				    android:id="@+id/progressText"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="left"
+				    android:layout_margin="@dimen/padding_medium"
+				    android:text="Progress"
+				    android:textColor="@color/dark_grey" />
+		    
+		    	<ProgressBar
+		    	    android:id="@+id/uploadProgress"
+		    	    style="?android:attr/progressBarStyleHorizontal"
+		    	    android:layout_width="match_parent"
+		    	    android:layout_height="wrap_content"
+		    	    android:layout_gravity="center_vertical|center_horizontal"
+		    	    android:layout_margin="@dimen/padding_medium"
+		    	    android:indeterminate="false"
+		    	    android:progressDrawable="@drawable/upload_progress" />
+		    	
+			</LinearLayout>
+
+		    <LinearLayout
+		    	android:layout_width="fill_parent"
+		    	android:layout_height="0dip"
+		    	android:layout_weight="0.25"
+		    	android:gravity="center_vertical|center_horizontal"
+		    	android:orientation="vertical" >
+		    </LinearLayout>
+								
+		</LinearLayout>
+
+		<LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.25"
+		    android:gravity="bottom"
+		    android:orientation="horizontal" >
+				
+			<Button
+    			android:id="@+id/cancelButton"
+    			android:layout_width="wrap_content"
+    			android:layout_height="wrap_content"
+    			android:textColor="@color/text_white_color"
+    			android:text="@string/cancel_upload" />
+
+		</LinearLayout>
 </LinearLayout>
+</FrameLayout>

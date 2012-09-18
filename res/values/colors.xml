@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="background">#B6C5CB</color>
+    <color name="background_transparent">#99B6C5CB</color>
 	<color name="text_background">#191315</color>
+	<color name="dark_grey">#333333</color>
 	<color name="text_white_color">#F3F3F3</color>
 	<color name="transparent">#0000</color>
-    
+    <color name="progress_red">#cb242b</color>
 </resources>

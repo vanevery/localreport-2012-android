@@ -89,7 +89,7 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		//getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 		//		WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
 		//camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_LOW);
 		// Check that H.264 is available

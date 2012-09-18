@@ -17,4 +17,6 @@
     <string name="audio_call_hangup">Hangup</string>
     <string name="audio_call_title">Audio Call</string>
 
+    <string name="upload_title">Transferring Video</string>
+    <string name="cancel_upload">Cancel</string>
 </resources>

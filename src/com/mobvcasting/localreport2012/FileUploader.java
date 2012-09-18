@@ -1,11 +1,8 @@
 package com.mobvcasting.localreport2012;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FilterOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import org.apache.http.HttpEntity;
@@ -20,11 +17,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -46,7 +41,7 @@ public class FileUploader extends Activity implements OnClickListener {
 	String postingResult = "";
 	long fileLength = 0;
 
-	TextView textview;
+	TextView progressTextview;
 	
 	ProgressBar mProgress;
     int mProgressStatus = 0;
@@ -58,7 +53,11 @@ public class FileUploader extends Activity implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		initUI();
+		setContentView(R.layout.activity_video_uploader);
+		progressTextview = (TextView) findViewById(R.id.progressText);
+		mProgress = (ProgressBar) findViewById(R.id.uploadProgress);
+		cancelButton = (Button) findViewById(R.id.cancelButton);
+		cancelButton.setOnClickListener(this);
 		
         // Get the extras that have been passed in
         Bundle extras = getIntent().getExtras();
@@ -108,17 +107,7 @@ public class FileUploader extends Activity implements OnClickListener {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
       super.onConfigurationChanged(newConfig);
-      initUI();
     }
-	
-
-	public void initUI() {
-		setContentView(R.layout.activity_video_uploader);
-		textview = (TextView) findViewById(R.id.textview);
-		mProgress = (ProgressBar) findViewById(R.id.uploadProgress);
-		cancelButton = (Button) findViewById(R.id.cancelButton);
-		cancelButton.setOnClickListener(this);
-	}
 	
 	class UploaderTask extends AsyncTask<Void, String, String> implements ProgressListener 
 	{
@@ -160,7 +149,7 @@ public class FileUploader extends Activity implements OnClickListener {
 		}
 
 		protected void onProgressUpdate(String... textToDisplay) {
-			textview.setText(textToDisplay[0]);
+			progressTextview.setText(textToDisplay[0]);
 		}
 
 		protected void onPostExecute(String result) {
