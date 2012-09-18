@@ -21,12 +21,35 @@
 	    android:layout_height="fill_parent"
 	    android:orientation="vertical" >
     
-	    <TextView
-    	    android:id="@+id/TitleTextView"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:text="@string/title_activity_video_capture" 
-        	android:textSize="20sp" />
+		<LinearLayout
+    		android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+    		android:orientation="horizontal"
+    		android:padding="5dp" >	    
+			
+			<TextView
+    	    	android:id="@+id/TitleTextView"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		android:layout_gravity="center_horizontal"
+	        	android:layout_marginTop="5dp"
+    	    	android:layout_marginLeft="10dp"
+        		android:layout_marginRight="10dp"
+        		android:background="@color/text_background"
+	        	android:padding="@dimen/padding_medium"
+    	    	android:text="@string/title_activity_video_capture"
+        		android:textColor="@color/text_white_color"
+        		android:textSize="15sp" />
+			
+			<ImageView 
+				    android:id="@+id/capture_camera"
+				    android:src="@drawable/capture_camera"
+			    	android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center_vertical"
+			    />
+		
+		</LinearLayout>	    
     
 	    <TextView
     	    android:id="@+id/CountDownTimer"
@@ -42,6 +65,9 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_gravity="right|center_vertical"
+	    android:drawableTop="@drawable/startshoot_reddot"
+	    android:background="@color/transparent"
+	    android:padding="@dimen/padding_medium"
 	    android:text="Start" />
 	
 	<Button
