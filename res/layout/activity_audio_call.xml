@@ -1,46 +1,152 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:keepScreenOn="true">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/background">
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/map_bg"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:padding="@dimen/padding_medium"
-        android:text="@string/audio_call_title"
-        tools:context=".AudioCapture" />
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:scaleType="centerCrop"
+		android:layout_marginTop="5dp"
+    	android:layout_marginBottom="5dp"
+        android:src="@drawable/map_bg" />
+    
+	<LinearLayout
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/backupButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="66dp"
-        android:text="@string/backup_button_title"
-        android:visibility="invisible" />
+		<LinearLayout
+    		android:layout_width="fill_parent"
+    		android:layout_height="wrap_content"
+    		android:orientation="horizontal"
+    		android:layout_weight="0.25" >
 
-    <Button
-        android:id="@+id/dialButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/backupButton"
-        android:layout_alignLeft="@+id/backupButton"
-        android:layout_marginBottom="58dp"
-        android:text="@string/audio_call_dial" />
+			<LinearLayout
+    			android:layout_width="fill_parent"
+	    		android:layout_height="wrap_content"
+    			android:orientation="horizontal"
+    			android:padding="5dp" >
+		    	    
+				<TextView
+    	    		android:id="@+id/audioCallTitleTextView"
+        			android:layout_width="wrap_content"
+        			android:layout_height="wrap_content"
+        			android:layout_gravity="center_horizontal"
+	        		android:layout_marginTop="5dp"
+    	    		android:layout_marginLeft="10dp"
+        			android:layout_marginRight="10dp"
+        			android:background="@color/text_background"
+	        		android:padding="@dimen/padding_medium"
+    	    		android:text="@string/audio_call_title"
+        			android:textColor="@color/text_white_color"
+        			android:textSize="15sp"
+         		/>
+				
+				<ImageView 
+				    android:id="@+id/audio_call_wave"
+				    android:src="@drawable/audiocall_wave"
+			    	android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center_vertical"
+			    />
+			
+			</LinearLayout>
 
-    <Button
-        android:id="@+id/hangupButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/dialButton"
-        android:layout_alignBottom="@+id/dialButton"
-        android:layout_alignRight="@+id/backupButton"
-        android:text="@string/audio_call_hangup" />
+		</LinearLayout>
+		
+		<LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="0dip"
+		    android:layout_weight="0.50"
+		    android:background="@color/background_transparent"
+		    android:gravity="center_vertical|center_horizontal"
+		    android:orientation="vertical" >
 
-</RelativeLayout>
+		    <LinearLayout
+		    	android:layout_width="fill_parent"
+		    	android:layout_height="0dip"
+		    	android:layout_weight="0.15"
+		    	android:gravity="center_vertical|center_horizontal"
+		    	android:orientation="vertical" >
+		    </LinearLayout>
+		    					
+			<LinearLayout
+			    android:layout_width="fill_parent"
+			    android:layout_height="0dip"
+			    android:layout_weight="0.70"
+			    android:background="@color/background"
+			    android:gravity="center_vertical|center_horizontal"
+			    android:orientation="vertical" >
+
+			    <LinearLayout
+			    	android:layout_width="fill_parent"
+			    	android:layout_height="wrap_content"
+			    	android:background="@color/background"
+			    	android:gravity="center_vertical|center_horizontal"
+			    	android:orientation="horizontal" >
+			    
+		    		<Button
+		    	    	android:id="@+id/dialButton"
+		    	    	android:layout_width="0dip"
+		    	    	android:layout_weight=".5"
+		    	    	android:layout_height="wrap_content"
+		    	    	android:layout_margin="@dimen/padding_medium"
+		    	    	android:background="@color/transparent"
+		    	    	android:drawableTop="@drawable/dialstart_button"
+		    	    	android:text="@string/audio_call_dial" />
+
+			    	<Button
+			        	android:id="@+id/hangupButton"
+				        android:layout_width="0dip"
+				        android:layout_weight=".5"
+				        android:layout_height="wrap_content"
+				        android:layout_margin="@dimen/padding_medium"
+				        android:background="@color/transparent"
+			    	    android:drawableTop="@drawable/hangup_button"
+			        	android:text="@string/audio_call_hangup" />
+			    
+			    </LinearLayout>
+		    	
+			    <TextView
+				    android:id="@+id/callStatus"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_margin="@dimen/padding_medium"
+				    android:text="Call Status"
+				    android:textColor="@color/dark_grey" />
+			    
+			</LinearLayout>
+
+		    <LinearLayout
+		    	android:layout_width="fill_parent"
+		    	android:layout_height="0dip"
+		    	android:layout_weight="0.15"
+		    	android:gravity="center_vertical|center_horizontal"
+		    	android:orientation="vertical" >
+		    </LinearLayout>
+								
+		</LinearLayout>
+
+		<LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.25"
+		    android:gravity="bottom"
+		    android:orientation="horizontal" >
+				
+			<Button
+    			android:id="@+id/cancelButton"
+    			android:layout_width="wrap_content"
+    			android:layout_height="wrap_content"
+    			android:textColor="@color/text_white_color"
+    			android:text="@string/cancel_upload" />
+
+		</LinearLayout>
+</LinearLayout>
+
+</FrameLayout>
