@@ -41,12 +41,11 @@
         		android:textSize="15sp" />
 			
 			<ImageView 
-				    android:id="@+id/capture_camera"
-				    android:src="@drawable/capture_camera"
-			    	android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:layout_gravity="center_vertical"
-			    />
+				android:id="@+id/capture_camera"
+				android:src="@drawable/capture_camera"
+			    android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical" />
 		
 		</LinearLayout>	    
 		
@@ -69,8 +68,9 @@
 	    android:layout_height="wrap_content"
 	    android:layout_gravity="right|center_vertical"
 	    android:drawableTop="@drawable/startshoot_reddot"
-	    android:background="@color/transparent"
 	    android:padding="@dimen/padding_medium"
+	    android:textColor="@color/text_white_color"
+	    android:background="@color/text_background"
 	    android:text="Start" />
 	
 	<Button
