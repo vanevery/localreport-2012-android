@@ -3,19 +3,20 @@
     <string name="default_message">No Messages</string>    
     
     <string name="shoot_button">Shoot</string>
-    <string name="call_button">Dial</string>
+    <string name="call_button">Call</string>
     
     <string name="title_activity_video_capture">Capture and Send Video</string>
+    <string name="shoot_start">Start</string>
+    <string name="cancel_button">Cancel</string>
     
-    <string name="backup_button_title">Record and Upload Audio</string>
-    
+    <string name="backup_button_title">Record and Upload Audio</string>    
     <string name="title_activity_audio_capture">Record Audio</string>
     <string name="audio_capture_stop_button">Stop Recording</string>
     <string name="audio_capture_upload_button">Upload Audio</string>
     
+    <string name="audio_call_title">Audio Call</string>
     <string name="audio_call_dial">Dial</string>
     <string name="audio_call_hangup">Hangup</string>
-    <string name="audio_call_title">Audio Call</string>
 
     <string name="upload_title">Transferring Video</string>
     <string name="cancel_upload">Cancel</string>

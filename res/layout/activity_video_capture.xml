@@ -56,7 +56,7 @@
         	android:gravity="center_horizontal"
         	android:background="@color/text_background"
         	android:textColor="@color/text_white_color"
-        	android:text="Time Remaining: 30" 
+        	android:text="Time Remaining: 20" 
         	android:layout_marginLeft="10dp"
         	android:padding="@dimen/padding_medium" />
             
@@ -67,17 +67,23 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_gravity="right|center_vertical"
-	    android:drawableTop="@drawable/startshoot_reddot"
+	    android:background="@color/transparent"
+        android:drawablePadding="-10dp"
+	    android:drawableTop="@drawable/dialstart_button_x"
 	    android:padding="@dimen/padding_medium"
-	    android:textColor="@color/text_white_color"
-	    android:background="@color/text_background"
-	    android:text="Start" />
+	    android:text="@string/shoot_start"
+	    android:textColor="@color/text_white_color" />
 	
 	<Button
 	    android:id="@+id/CancelButton"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_gravity="right|bottom"
-	    android:text="Cancel" />
+	    android:background="@color/transparent"
+        android:drawablePadding="-10dp"    
+	    android:drawableTop="@drawable/cancel_button_x"
+	    android:padding="@dimen/padding_medium"
+	    android:text="@string/cancel_button"
+	    android:textColor="@color/text_white_color" />
 
 </FrameLayout>

@@ -39,17 +39,19 @@
 	
     	<Button
     	    android:id="@+id/shoot_button"
-			android:drawableTop="@drawable/shoot_button"
     	    android:layout_width="0.0dip"
     	    android:layout_height="wrap_content"
-    	    android:layout_weight="1"
     	    android:layout_marginLeft="10dp"
-			android:background="@color/transparent"
+    	    android:layout_weight="1"
+    	    android:background="@color/transparent"
+    	    android:drawableTop="@drawable/shoot_button_x"
+    	    android:drawablePadding="-10dp"
     	    android:text="@string/shoot_button" />
 
     	<Button
     	    android:id="@+id/call_button"
-    	    android:drawableTop="@drawable/dial_button"    	    
+    	    android:drawableTop="@drawable/call_button_x"  
+    	    android:drawablePadding="-10dp"  	    
     	    android:layout_width="0.0dip"
     	    android:layout_height="wrap_content"
     	    android:layout_weight="1"
