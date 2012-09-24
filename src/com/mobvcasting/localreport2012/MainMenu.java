@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +33,8 @@ public class MainMenu extends Activity implements OnClickListener {
     
 	Button videoButton, audioButton;
 	TextView messageView;
+	
+	private ProgressDialog progressDialog;	
 	
     private LocationTracker locationTracker;
 	
@@ -67,8 +70,13 @@ public class MainMenu extends Activity implements OnClickListener {
 	 Saving Battery life..  Not sure we want to do this
 	 */
 	public void onPause() {
-		unbindService(locationTrackerConnection);
-		
+		if (locationTracker != null) {
+			unbindService(locationTrackerConnection);
+		}
+		if (progressDialog != null && progressDialog.isShowing()) {
+			progressDialog.cancel();
+			progressDialog = null;
+		}
 		super.onPause(); 
 		//locationManager.removeUpdates(this);
 	}
@@ -84,7 +92,8 @@ public class MainMenu extends Activity implements OnClickListener {
 	}
 	
 	public void onDestroy() {
-		unbindService(locationTrackerConnection);
+		// This is done in onPause
+		//unbindService(locationTrackerConnection);
 		super.onDestroy();
 	}
 	
@@ -100,8 +109,20 @@ public class MainMenu extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		if (v == audioButton) {
+
+			progressDialog = new ProgressDialog(this);
+			progressDialog.setIndeterminate(true);
+			progressDialog.setCancelable(false); 
+			progressDialog.show();
+			
     		startActivity(new Intent(this, AudioCall.class));
 		} else if (v == videoButton) {
+
+			progressDialog = new ProgressDialog(this);
+			progressDialog.setIndeterminate(true);
+			progressDialog.setCancelable(false); 
+			progressDialog.show();
+			
     		startActivity(new Intent(this, VideoCapture.class));			
 		}
 	}
@@ -133,7 +154,8 @@ public class MainMenu extends Activity implements OnClickListener {
 
             if (TESTING) {
                 // Tell the user about this for our demo.
-            	Toast.makeText(MainMenu.this, "Connected", Toast.LENGTH_SHORT).show();
+            	//Toast.makeText(MainMenu.this, "Connected", Toast.LENGTH_SHORT).show();
+            	Log.v(LOGTAG,"Connected to Location Service");
             }
         }
 
@@ -145,7 +167,8 @@ public class MainMenu extends Activity implements OnClickListener {
         	locationTracker = null;
         	
         	if (TESTING) {
-        		Toast.makeText(MainMenu.this, "Disconnected", Toast.LENGTH_SHORT).show();
+        		//Toast.makeText(MainMenu.this, "Disconnected", Toast.LENGTH_SHORT).show();
+        		Log.v(LOGTAG,"Disconnected from Location Service");
         	}
         }
     };

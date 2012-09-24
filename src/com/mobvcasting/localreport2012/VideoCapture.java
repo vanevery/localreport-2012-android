@@ -95,8 +95,8 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		// Check that H.264 is available
 		highQualityProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
 		if (highQualityProfile.videoCodec != videoEncoder) {
-        	Toast.makeText(this, "Ut Oh, H.264 isn't available, we don't support your phone", Toast.LENGTH_LONG).show();
-        	
+        	Toast.makeText(this, "Ut Oh, H.264 isn't available, we don't support your phone at the moment.  Please report this error.", Toast.LENGTH_LONG).show();
+        	Log.v(LOGTAG,"High Quality Profile doesn't support H.264. Finishing.");
         	finish();
         	
         	// Sadly H.263 isn't going to work for us
@@ -108,14 +108,17 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	    	recordingQuality = HIGH_QUALITY;
 	    	if (MainMenu.TESTING) {
 	    		Toast.makeText(this, "WiFi Enabled, High Quality Recordng", Toast.LENGTH_LONG).show();
+	        	Log.v(LOGTAG,"WiFi Enabled, High Quality Recordng");
 	    	}
 	    } else if (cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isAvailable()) {
 	    	recordingQuality = LOW_QUALITY;
 	    	if (MainMenu.TESTING) {
 	    		Toast.makeText(this, "WiFi Not Enabled, Low Quality Recordng", Toast.LENGTH_LONG).show();
+	        	Log.v(LOGTAG,"WiFi Not Enabled, Low Quality Recordng");
 	    	}
 	    } else {
 	    	Toast.makeText(this, "No Network Connection Available, Can Not Record Video", Toast.LENGTH_LONG).show();
+        	Log.v(LOGTAG,"No Network Connection Available, Can Not Record Video");
 	    	finish();
 	    }
 
@@ -171,17 +174,19 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		recorder.setVideoSource(videoSource);
 
 		// Not sure I really want to do this as I'll have to implment onInfo or whatever
+		/*
 		try {
 			recorder.setMaxDuration((int)(RECORD_TIME + ONE_SECOND));
 			//recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
 		} catch (RuntimeException re) {
 			Log.v(LOGTAG,re.getMessage());
 		}
-
+		*/
+		
 		recorder.setOutputFormat(videoFormat);
 		
 		//Looping through settings in SurfaceChanged
-		System.out.println("Size: " + videoWidth + " " + videoHeight);
+		Log.v(LOGTAG,"Size: " + videoWidth + " " + videoHeight);
 		if (videoWidth > 0) {
 			recorder.setVideoSize(videoWidth, videoHeight);
 
@@ -192,7 +197,7 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		}
 
 		//Looping through settings in SurfaceChanged
-		System.out.println("Framerate: " + videoFramerate);
+		Log.v(LOGTAG,"Framerate: " + videoFramerate);
 		if (videoFramerate > 0) {
 			recorder.setVideoFrameRate(videoFramerate);
 		} else {
@@ -271,6 +276,7 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 			}
 		} else if (v == cancelButton) {
 			// I think surfacedestroyed will take care of deinitalization
+			Log.v(LOGTAG,"Cancel pressed");
 			finish();
 		}
 	}
@@ -359,7 +365,9 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	}
 	
 	public void onDestroy() {
-		unbindService(locationTrackerConnection);
+		if (locationTracker != null) {
+			unbindService(locationTrackerConnection);
+		}
 		super.onDestroy();
 	}
 	
@@ -375,7 +383,8 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 
             if (MainMenu.TESTING) {
                 // Tell the user about this for our demo.
-            	Toast.makeText(VideoCapture.this, "Connected", Toast.LENGTH_SHORT).show();
+            	//Toast.makeText(VideoCapture.this, "Connected", Toast.LENGTH_SHORT).show();
+            	Log.v(LOGTAG,"Connected to Location Service");
             }
         }
 
@@ -387,7 +396,8 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
         	locationTracker = null;
         	
         	if (MainMenu.TESTING) {
-        		Toast.makeText(VideoCapture.this, "Disconnected", Toast.LENGTH_SHORT).show();
+        		//Toast.makeText(VideoCapture.this, "Disconnected", Toast.LENGTH_SHORT).show();
+        		Log.v(LOGTAG,"Disconnected from Location Service");
         	}
         }
     };	
