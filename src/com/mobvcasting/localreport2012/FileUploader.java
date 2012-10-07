@@ -37,6 +37,7 @@ public class FileUploader extends Activity implements OnClickListener {
 	String audioOrVideo = "video";
 	String latitude = null;
 	String longitude = null;
+	String h264 = "true";
 
 	String postingResult = "";
 	long fileLength = 0;
@@ -94,6 +95,11 @@ public class FileUploader extends Activity implements OnClickListener {
         		}
         		Log.v(LOGTAG,"No Lat Lon Passed Through");
         	}
+        	
+        	if (extras.containsKey("h264")) {
+        		h264 = extras.getString("h264");
+        		Log.v(LOGTAG,"Video is in h264? " + h264);
+        	}
 	
 			vut = new UploaderTask();
 			vut.execute();
@@ -125,6 +131,7 @@ public class FileUploader extends Activity implements OnClickListener {
 				multipartentity.addPart("participant_device_id", new StringBody(participantDeviceId));
 				multipartentity.addPart("audio_or_video", new StringBody(audioOrVideo));
 				multipartentity.addPart("form_submitted", new StringBody("true"));
+				multipartentity.addPart("h264", new StringBody(h264));
 
 				if (latitude != null && longitude != null) {
 					multipartentity.addPart("latitude", new StringBody(latitude));

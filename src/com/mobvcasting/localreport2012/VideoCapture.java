@@ -54,7 +54,7 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 	int videoBitrate = LOW_TARGET_BITRATE;
 	int videoEncoder = MediaRecorder.VideoEncoder.H264;
 	int videoSource = MediaRecorder.VideoSource.DEFAULT;
-	int videoFormat = MediaRecorder.OutputFormat.MPEG_4;
+	int videoFormat = MediaRecorder.OutputFormat.MPEG_4;	
 	
 	CamcorderProfile highQualityProfile;
 	
@@ -92,13 +92,15 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 		// Check that H.264 is available
 		highQualityProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
 		if (highQualityProfile.videoCodec != videoEncoder) {
-        	Toast.makeText(this, "Ut Oh, H.264 isn't available, we don't support your phone at the moment.  Please report this error.", Toast.LENGTH_LONG).show();
-        	Log.v(LOGTAG,"High Quality Profile doesn't support H.264. Finishing.");
-        	finish();
+        	//Toast.makeText(this, "Ut Oh, H.264 isn't available, we don't support your phone at the moment.  Please report this error.", Toast.LENGTH_LONG).show();
+        	Log.v(LOGTAG,"High Quality Profile doesn't support H.264. Trying whatever they do support.");
+        	//finish();
         	
-        	// Sadly H.263 isn't going to work for us
+        	// Sadly we have to try H.263 
+        	videoEncoder = MediaRecorder.VideoEncoder.H263;
 		}
-		
+    	//videoEncoder = MediaRecorder.VideoEncoder.H263;
+
 	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    if (cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()) {
 	    	//camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
@@ -248,6 +250,9 @@ public class VideoCapture extends Activity implements OnClickListener, SurfaceHo
 			fileUpIntent.putExtra("filePath", filePath);
 			fileUpIntent.putExtra("audio_or_video", "video");
 			fileUpIntent.putExtra("participant_device_id", MainMenu.getUniqueId(this));
+			if (videoEncoder != MediaRecorder.VideoEncoder.H264) {
+				fileUpIntent.putExtra("h264", "false");
+			}
 			
 			if (locationTracker.currentLocation != null) {
 				fileUpIntent.putExtra("latitude", ""+locationTracker.currentLocation.getLatitude());
